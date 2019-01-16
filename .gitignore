@@ -8,3 +8,7 @@
 /BigchainDbDriver.Application/Backup
 /BigchainDbDriver.Application/BigchainDbDriver.Application/bin/Debug/netcoreapp2.1
 /BigchainDbDriver.Application/BigchainDbDriver.Application/obj
+/BigchainDbDriver.Application/BigchainDbDriver.Assets/obj
+/BigchainDbDriver.Application/BigchainDbDriver.Assets/bin/Debug/netcoreapp2.1
+/BigchainDbDriver.Application/BigchainDbDriver.Transactions/bin/Debug/netcoreapp2.1
+/BigchainDbDriver.Application/BigchainDbDriver.Transactions/obj
