@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/BigchainDbDriver.Application/UpgradeLog.htm
+/.vs
+/BigchainDbDriver.Application/.vs/BigchainDbDriver.Application
+/BigchainDbDriver.Application/Backup
+/BigchainDbDriver.Application/BigchainDbDriver.Application/bin/Debug/netcoreapp2.1
+/BigchainDbDriver.Application/BigchainDbDriver.Application/obj
