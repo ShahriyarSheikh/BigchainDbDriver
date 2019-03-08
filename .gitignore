@@ -12,3 +12,6 @@
 /BigchainDbDriver.Application/BigchainDbDriver.Assets/bin/Debug/netcoreapp2.1
 /BigchainDbDriver.Application/BigchainDbDriver.Transactions/bin/Debug/netcoreapp2.1
 /BigchainDbDriver.Application/BigchainDbDriver.Transactions/obj
+/BigchainDbDriver.Application/BigchainDbDriver.KeyPair/obj/Debug/netcoreapp2.1
+/BigchainDbDriver.Application/BigchainDbDriver.KeyPair/obj
+/BigchainDbDriver.Application/BigchainDbDriver.KeyPair/bin/Debug/netcoreapp2.1

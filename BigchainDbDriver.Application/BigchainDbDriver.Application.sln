@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigchainDbDriver.Application", "BigchainDbDriver.Application\BigchainDbDriver.Application.csproj", "{718CC467-DD1E-4E92-9838-96C6936F88A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BigchainDbDriver.Application", "BigchainDbDriver.Application\BigchainDbDriver.Application.csproj", "{718CC467-DD1E-4E92-9838-96C6936F88A0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{036AF865-8380-48C1-B631-AC469C896ABC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigchainDbDriver.Assets", "BigchainDbDriver.Assets\BigchainDbDriver.Assets.csproj", "{93223D75-CF1C-4141-8541-817A51B195FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BigchainDbDriver.Assets", "BigchainDbDriver.Assets\BigchainDbDriver.Assets.csproj", "{93223D75-CF1C-4141-8541-817A51B195FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigchainDbDriver.Transactions", "BigchainDbDriver.Transactions\BigchainDbDriver.Transactions.csproj", "{67DF47E3-B038-457B-BF60-467DCC2A1813}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BigchainDbDriver.Transactions", "BigchainDbDriver.Transactions\BigchainDbDriver.Transactions.csproj", "{67DF47E3-B038-457B-BF60-467DCC2A1813}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigchainDbDriver.KeyPair", "BigchainDbDriver.KeyPair\BigchainDbDriver.KeyPair.csproj", "{D0E689E3-2748-4DD3-970A-595B92D193CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,12 +31,17 @@ Global
 		{67DF47E3-B038-457B-BF60-467DCC2A1813}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67DF47E3-B038-457B-BF60-467DCC2A1813}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67DF47E3-B038-457B-BF60-467DCC2A1813}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0E689E3-2748-4DD3-970A-595B92D193CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0E689E3-2748-4DD3-970A-595B92D193CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0E689E3-2748-4DD3-970A-595B92D193CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0E689E3-2748-4DD3-970A-595B92D193CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{67DF47E3-B038-457B-BF60-467DCC2A1813} = {036AF865-8380-48C1-B631-AC469C896ABC}
+		{D0E689E3-2748-4DD3-970A-595B92D193CD} = {036AF865-8380-48C1-B631-AC469C896ABC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EAA2DAE6-AB8F-459D-9CAF-0C8D356E9575}

@@ -5,4 +5,8 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BigchainDbDriver.KeyPair\BigchainDbDriver.KeyPair.csproj" />
+  </ItemGroup>
+
 </Project>

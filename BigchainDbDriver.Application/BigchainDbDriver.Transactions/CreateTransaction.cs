@@ -11,7 +11,7 @@ namespace BigchainDbDriver.Transactions
 		{
 
 		}
-		public dynamic MakeCreateTransaction(dynamic assets,dynamic metadata, dynamic outputs, List<string> issuers) {
+		public TxTemplate MakeCreateTransaction(dynamic assets,dynamic metadata, dynamic outputs, List<string> issuers) {
 			var assetsDefinition = new AssetsModel {
 				Assets = assets ?? null
 			};
