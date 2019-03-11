@@ -7,9 +7,8 @@ namespace BigchainDbDriver.Application
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
             Ed25519Keypair ed25519Keypair = new Ed25519Keypair();
-            var result = ed25519Keypair.GenerateKeyPair("abc");
+            var result = ed25519Keypair.GenerateKeyPair(new byte[32]);
 		}
 	}
 }

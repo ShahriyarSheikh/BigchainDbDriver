@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BigchainDbDriver.Assets", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BigchainDbDriver.Transactions", "BigchainDbDriver.Transactions\BigchainDbDriver.Transactions.csproj", "{67DF47E3-B038-457B-BF60-467DCC2A1813}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigchainDbDriver.KeyPair", "BigchainDbDriver.KeyPair\BigchainDbDriver.KeyPair.csproj", "{D0E689E3-2748-4DD3-970A-595B92D193CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BigchainDbDriver.KeyPair", "BigchainDbDriver.KeyPair\BigchainDbDriver.KeyPair.csproj", "{D0E689E3-2748-4DD3-970A-595B92D193CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BigchainDbDriver.NUnit.Tests", "BigchainDbDriver.NUnit.Tests\BigchainDbDriver.NUnit.Tests.csproj", "{E248030F-FC77-41CC-AA6C-44D59F03908C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{D0E689E3-2748-4DD3-970A-595B92D193CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0E689E3-2748-4DD3-970A-595B92D193CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0E689E3-2748-4DD3-970A-595B92D193CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E248030F-FC77-41CC-AA6C-44D59F03908C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E248030F-FC77-41CC-AA6C-44D59F03908C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E248030F-FC77-41CC-AA6C-44D59F03908C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E248030F-FC77-41CC-AA6C-44D59F03908C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
