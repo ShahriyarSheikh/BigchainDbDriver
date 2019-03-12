@@ -27,7 +27,7 @@ namespace BigchainDbDriver.KeyPair
             var pk = Ed25519.PublicKeyFromSeed(byt);
 
             var sk = Ed25519.ExpandedPrivateKeyFromSeed(byt);
-
+            
             // tweetnacl's generated secret key is the secret key + public key (resulting in a 64-byte buffer)
             // therefore require slicing
             var _sk = Slice(sk, bytesSupportedbyEd25519);
