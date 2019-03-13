@@ -7,7 +7,9 @@ namespace BigchainDbDriver.Assets.Models.TransactionModels
 {
     public class InputTemplate
     {
-        public string Fulfilment { get; set; }
+        [JsonProperty("fulfillment")]
+        public string Fulfillment { get; set; }
+        [JsonProperty("fulfills")]
         public string Fulfills { get; set; }
         [JsonProperty("owners_before")]
         public List<string> Owners_before { get; set; }

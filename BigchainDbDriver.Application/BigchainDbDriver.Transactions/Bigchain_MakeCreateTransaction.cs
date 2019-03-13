@@ -23,9 +23,9 @@ namespace BigchainDbDriver.Transactions
         /// <param name="outputs"></param>
         /// <param name="issuers"></param>
         /// <returns></returns>
-		public TxTemplate MakeCreateTransaction(dynamic assets,dynamic metadata, List<Output> outputs, List<string> issuers) {
+		public TxTemplate MakeCreateTransaction(Asset assets,dynamic metadata, List<Output> outputs, List<string> issuers) {
 			var assetsDefinition = new AssetDefinition {
-				Assets = assets ?? null
+				Data = assets.Assets.Data ?? null
 			};
 			var _inputs = makeInputTemplate( issuers);
 
@@ -83,7 +83,7 @@ namespace BigchainDbDriver.Transactions
 			foreach (var temp in publicKeys) {
 				listOfInputTemplates.Add(new InputTemplate
 				{
-					Fulfilment = fulfillment,
+					Fulfillment = fulfillment,
 					Fulfills = fulfills,
 					Owners_before = publicKeys,
 				});

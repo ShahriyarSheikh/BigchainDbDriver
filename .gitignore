@@ -17,3 +17,8 @@
 /BigchainDbDriver.Application/BigchainDbDriver.KeyPair/bin/Debug/netcoreapp2.1
 /BigchainDbDriver.Application/BigchainDbDriver.NUnit.Tests/obj
 /BigchainDbDriver.Application/BigchainDbDriver.NUnit.Tests/bin/Debug/netcoreapp2.1
+/BigchainDbDriver.Application/BigchainDbDriver.Common/bin/Debug/netcoreapp2.1
+/BigchainDbDriver.Application/BigchainDbDriver.Common/obj
+/BigchainDbDriver.Application/BigchainDbDriver.General/obj/Debug/netcoreapp2.1
+/BigchainDbDriver.Application/BigchainDbDriver.General/bin/Debug/netcoreapp2.1
+/BigchainDbDriver.Application/BigchainDbDriver.General/obj
