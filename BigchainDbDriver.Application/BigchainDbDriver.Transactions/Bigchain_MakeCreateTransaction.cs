@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using BigchainDbDriver.Assets.Models.TransactionModels;
+using BigchainDbDriver.Common;
 using NBitcoin.DataEncoders;
 using Newtonsoft.Json;
 
@@ -73,7 +74,7 @@ namespace BigchainDbDriver.Transactions
                     PublicKey = pubkey,
                     Type = "ed25519-sha-256"
                 },
-                Uri = ""
+                Uri = pubkey.GenerateMockUri()
             };
         }
 
@@ -105,7 +106,7 @@ namespace BigchainDbDriver.Transactions
 		}
 	}
 
-	public class TxTemplate {
+	public class TxTemplate : ICloneable {
 		[JsonProperty("id")]
 		public dynamic Id { get; set; }
 		[JsonProperty("operation")]
@@ -120,5 +121,11 @@ namespace BigchainDbDriver.Transactions
 		public dynamic Asset { get; set; }
 		[JsonProperty("version")]
 		public string Version { get; set; }
-	}
+
+        public virtual object Clone() {
+
+            return this.MemberwiseClone();
+        }
+
+    }
 }

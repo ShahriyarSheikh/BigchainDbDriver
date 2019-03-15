@@ -116,7 +116,7 @@ namespace BigchainDbDriver.NUnit.Tests
 
                         },
                         PublicKeys = new List<string>(){
-                            "9GrgtiScWLhZGT4vk9J1rVy2mr7PCg6ZbNhVYR8aPz6a"
+                            "EN6jFN4LAaBnzkZQekdzYU5XUTyKKX5EiUUBnFgfkozQ"
                         }
                     }
                 }

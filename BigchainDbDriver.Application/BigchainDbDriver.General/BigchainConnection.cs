@@ -37,8 +37,9 @@ namespace BigchainDbDriver.General
         {
             EnsureClient();
             var txSerialized = JsonConvert.SerializeObject(transaction);
-            var response = await client.PostAsync(GetApiUrls(BigchainDbUrls.Transactions), new StringContent(txSerialized, Encoding.UTF8, "application/json"));
-
+            var canonicalString = JsonUtility.SerializeTransactionIntoCanonicalString(txSerialized);
+            var response = await client.PostAsync(GetApiUrls(BigchainDbUrls.Transactions), new StringContent(canonicalString, Encoding.UTF8, "application/json"));
+            
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 return (null,response.StatusCode);

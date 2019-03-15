@@ -7,7 +7,9 @@ namespace BigchainDbDriver.Assets.Models.TransactionModels
 {
     public class MakeEd25519Condition
     {
+        [JsonProperty("details")]
         public Details Details { get; set; }
+        [JsonProperty("uri")]
         public string Uri { get; set; }
     }
 
