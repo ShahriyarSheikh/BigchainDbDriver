@@ -38,6 +38,19 @@ namespace BigchainDbDriver.Transactions
 
 		}
 
+        public TxTemplate MakeTransferTransaction() {
+            //const transfer = await bigchain.Transaction.makeTransferTransaction(
+
+            //  [{ tx: block,output_index: 0}],
+            //    [await bigchain.Transaction.makeOutput(await bigchain.Transaction.makeEd25519Condition(keys.PublicKey))],
+            //    block.metadata
+            //  )
+            //  const txSigned = bigchain.Transaction.signTransaction(transfer, keys.PrivateKey);
+            //  return await driver.postTransactionCommit(txSigned)
+
+            return new TxTemplate();
+        }
+
 		private TxTemplate MakeTrasnsaction(string operation, dynamic assets, dynamic metadata = null, List<Output> outputs = null, List<InputTemplate> inputs = null) {
 			var tx = MakeTrasactionTemplate();
 			tx.Operation = operation;

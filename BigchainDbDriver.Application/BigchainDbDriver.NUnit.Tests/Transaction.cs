@@ -1,5 +1,7 @@
 ﻿using BigchainDbDriver.Assets.Models;
 using BigchainDbDriver.Assets.Models.TransactionModels;
+using BigchainDbDriver.Common;
+using BigchainDbDriver.Common.Cryptography;
 using BigchainDbDriver.General;
 using BigchainDbDriver.KeyPair;
 using BigchainDbDriver.Transactions;
@@ -24,7 +26,7 @@ namespace BigchainDbDriver.NUnit.Tests
 
 
         [Test, Order(1)]
-        public void Provided_Input_Payload_Metadata_Keys_AndMakeCreateTransction()
+        public void ProvidedInput_Payload_Metadata_Keys_AndMakeCreateTransction()
         {
 
             Bigchain_MakeCreateTransaction transaction = new Bigchain_MakeCreateTransaction();
@@ -62,6 +64,15 @@ namespace BigchainDbDriver.NUnit.Tests
             Assert.AreEqual(generatedKeyPair.PublicKey, txTemplate.Inputs[0].Owners_before[0]);
         }
 
+        [Test]
+        public void ProvidedPubKey_ShouldGeneratedValidCcUrl() {
+            var pubKey = "WuD9VBm3kAUKkZ2Cvvij4QsfkGFqxvfX6qGg6qQxsZs";
+            var expectedUri = "dCQ-qJBCsSNC6AGifLWu0Cuhv38V707Tk0C8TdR-R1k";
+
+            var generatedUri = pubKey.EncodeToBase64Url();
+            Assert.Pass();
+        }
+
         [Test, Order(2)]
         public async Task ProvidedSignedTx_ShouldPostCommitTransaction() {
             var signedTx = GetMockResponseSignedTx();
@@ -73,6 +84,70 @@ namespace BigchainDbDriver.NUnit.Tests
             Assert.That(status == HttpStatusCode.Accepted || status == HttpStatusCode.Created || status == HttpStatusCode.NoContent);
         }
 
+        [Test]
+        public void ProvidedTx_ShouldReturnValidSignedTx() {
+            var keypairgenerator = new Ed25519Keypair();
+            var keypair = keypairgenerator.GenerateKeyPair(new byte[32]);
+
+            var tx = GetMockResponseTx(keypair.PublicKey);
+            var signTx = new Bigchain_SignTransaction();
+            var signedTx = signTx.SignTransaction(tx, new List<string> { $"{keypair.PrivateKey}{keypair.PublicKey}" });
+            Assert.Pass();
+        }
+
+
+        private TxTemplate GetMockResponseTx(string pubKey)
+        {
+            return new TxTemplate
+            {
+                Id = null,
+                Asset = new AssetDefinition
+                {
+                    Data = new DataDefinition
+                    {
+                        Kyc = new KycDefinition
+                        {
+                            Dob = "11/23/1995 12:00:00 AM +00:00",
+                            Nab = "JohnDoe2",
+                            Pob = "PK",
+                            UserHash = "5c86551688dbd41fdc9ed303"
+                        }
+                    }
+
+                },
+                Inputs = new List<InputTemplate>() {
+                    new InputTemplate {
+                        Fulfills = null,
+                        Fulfillment = null,
+                        Owners_before = new List<string>() { pubKey }
+                    }
+                },
+                Metadata = new Metadata
+                {
+                    Error = null,
+                    Status = "A",
+                    Transaction = null
+                },
+                Operation = "CREATE",
+                Version = "2.0",
+                Outputs = new List<Output>() {
+                    new Output{
+                        Amount = "1",
+                        Condition = new MakeEd25519Condition{
+                            Details = new Details{
+                                PublicKey = pubKey,
+                                Type = "ed25519-sha-256"
+                            },
+                             Uri = pubKey.GenerateMockUri()
+
+                        },
+                        PublicKeys = new List<string>(){
+                            pubKey
+                        }
+                    }
+                }
+            };
+        }
 
         private SignedTxResponse GetMockResponseSignedTx() {
             return new SignedTxResponse
