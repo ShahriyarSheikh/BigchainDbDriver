@@ -29,7 +29,7 @@ namespace BigchainDbDriver.NUnit.Tests
         public void ProvidedInput_Payload_Metadata_Keys_AndMakeCreateTransction()
         {
 
-            Bigchain_MakeCreateTransaction transaction = new Bigchain_MakeCreateTransaction();
+            Bigchain_Transaction transaction = new Bigchain_Transaction();
             var assets = new Asset
             {
                 Assets = new AssetDefinition

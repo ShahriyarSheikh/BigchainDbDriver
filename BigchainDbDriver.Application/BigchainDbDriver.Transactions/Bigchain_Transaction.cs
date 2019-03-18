@@ -8,10 +8,10 @@ using Newtonsoft.Json;
 
 namespace BigchainDbDriver.Transactions
 {
-	public class Bigchain_MakeCreateTransaction
+	public class Bigchain_Transaction
 	{
         private readonly DataEncoder encoder;
-        public Bigchain_MakeCreateTransaction()
+        public Bigchain_Transaction()
         {
              encoder = Encoders.Base58;
         }
@@ -38,18 +38,35 @@ namespace BigchainDbDriver.Transactions
 
 		}
 
-        public TxTemplate MakeTransferTransaction() {
-            //const transfer = await bigchain.Transaction.makeTransferTransaction(
+        public TxTemplate MakeTransferTransaction(dynamic unspentOutputs, dynamic outputs, dynamic metadata) {
 
-            //  [{ tx: block,output_index: 0}],
-            //    [await bigchain.Transaction.makeOutput(await bigchain.Transaction.makeEd25519Condition(keys.PublicKey))],
-            //    block.metadata
-            //  )
-            //  const txSigned = bigchain.Transaction.signTransaction(transfer, keys.PrivateKey);
-            //  return await driver.postTransactionCommit(txSigned)
+            var inputList = new List<InputTemplate>();
+            foreach (var output in unspentOutputs) {
+                var _tx = new
+                {
+                    tx = output.tx,
+                    outputIndex = output.output_index
+                };
 
-            return new TxTemplate();
+                //var fulfulledOutput = _tx.outputs[_tx.outputIndex];
+                var fulfilledOutput = output[_tx.outputIndex];
+
+                var transactionLink = new Fulfill{
+                    OutputIndex = _tx.outputIndex,
+                    TransactionId = _tx.tx.id
+                };
+
+                inputList.Add(makeInputTemplate(fulfilledOutput.public_keys, transactionLink));
+
+            }
+
+            var assetLink = new {
+                id = unspentOutputs[0].tx.operation == 'CREATE' ? unspentOutputs[0].tx.id : unspentOutputs[0].tx.asset.id
+            };
+
+            return MakeTrasnsaction("TRANSFER", assetLink, metadata, outputs, inputList);
         }
+
 
 		private TxTemplate MakeTrasnsaction(string operation, dynamic assets, dynamic metadata = null, List<Output> outputs = null, List<InputTemplate> inputs = null) {
 			var tx = MakeTrasactionTemplate();
@@ -91,7 +108,7 @@ namespace BigchainDbDriver.Transactions
             };
         }
 
-		private List<InputTemplate> makeInputTemplate(List<string> publicKeys, string fulfills = null, string fulfillment = null)
+		private List<InputTemplate> makeInputTemplate(List<string> publicKeys, Fulfill fulfills = null, string fulfillment = null)
 		{
 			var listOfInputTemplates = new List<InputTemplate>();
 			foreach (var temp in publicKeys) {

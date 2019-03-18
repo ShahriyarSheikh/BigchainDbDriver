@@ -11,7 +11,7 @@ namespace BigchainDbDriver.Application
 		{
             Ed25519Keypair ed25519Keypair = new Ed25519Keypair();
             
-            var trans = new Bigchain_MakeCreateTransaction();
+            var trans = new Bigchain_Transaction();
             var res = trans.MakeEd25519Condition("EsyuLTCMqB4aHBXBC4UAJhAxxRQF9Trbmx2hjFPanZvL");
 
             var result = ed25519Keypair.GenerateKeyPair(new byte[32]);

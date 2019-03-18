@@ -10,7 +10,7 @@ namespace BigchainDbDriver.Assets.Models.TransactionModels
         [JsonProperty("fulfillment")]
         public string Fulfillment { get; set; }
         [JsonProperty("fulfills")]
-        public string Fulfills { get; set; }
+        public Fulfill Fulfills { get; set; }
         [JsonProperty("owners_before")]
         public List<string> Owners_before { get; set; }
     }
