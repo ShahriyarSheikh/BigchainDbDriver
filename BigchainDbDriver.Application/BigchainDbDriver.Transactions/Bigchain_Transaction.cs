@@ -61,7 +61,7 @@ namespace BigchainDbDriver.Transactions
             }
 
             var assetLink = new {
-                id = unspentOutputs[0].tx.operation == 'CREATE' ? unspentOutputs[0].tx.id : unspentOutputs[0].tx.asset.id
+                id = unspentOutputs[0].tx.operation == "CREATE" ? unspentOutputs[0].tx.id : unspentOutputs[0].tx.asset.id
             };
 
             return MakeTrasnsaction("TRANSFER", assetLink, metadata, outputs, inputList);
