@@ -27,17 +27,40 @@ namespace BigchainDbDriver.Common.Cryptography
             return Convert.ToBase64String(hash);
         }
 
-        public string GenerateSha256Hash(string serializedMessage) {
-            var bytesToSign = Encoding.UTF8.GetBytes(serializedMessage);
-
-            byte[] hash;
-
-            using (var sha = new SHA256Managed())
+        public string GenerateSha256Hash(string rawData) {
+            using (SHA256 sha256Hash = SHA256.Create())
             {
-                hash = sha.ComputeHash(bytesToSign, 0, bytesToSign.Length);
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+
+        private string ToHex(byte[] bytes, bool upperCase)
+        {
+            StringBuilder result = new StringBuilder(bytes.Length * 2);
+            for (int i = 0; i < bytes.Length; i++)
+                result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
+            return result.ToString();
+        }
+
+        public string SHA256HexHashString(string rawData)
+        {
+            string hashString;
+            using (var sha256 = SHA256Managed.Create())
+            {
+                var hash = sha256.ComputeHash(Encoding.Default.GetBytes(rawData));
+                hashString = ToHex(hash, false);
             }
 
-            return Convert.ToBase64String(hash);
+            return hashString;
         }
     }
 }

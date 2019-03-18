@@ -46,7 +46,7 @@ namespace BigchainDbDriver.Transactions
                 var pubKeyBuffer = encoder.DecodeData(transaction.Inputs[0].Owners_before[0]);
                 var transactionUniqueFulfillment = transaction.Inputs[0].Fulfills == null ? serializedTransaction : serializedTransaction;
 
-                var transactionHash = sha256.GenerateSha256Hash(transactionUniqueFulfillment);
+                var transactionHash = sha256.SHA256HexHashString(transactionUniqueFulfillment);
                 var signedFulfillment = CryptographyUtility.Ed25519Sign(pubKeyBuffer, privKeyBuffer);
                 var fulfillmentUri = CryptographyUtility.SerializeUri(signedFulfillment);
                 signedTx.Inputs[0].Fulfillment = fulfillmentUri;
@@ -59,7 +59,7 @@ namespace BigchainDbDriver.Transactions
             //return signedTx
 
             var serializedSignedTransaction = JsonUtility.SerializeTransactionIntoCanonicalString(JsonConvert.SerializeObject(signedTx));
-            signedTx.Id = sha256.GenerateSha256Hash(serializedSignedTransaction);
+            signedTx.Id = sha256.SHA256HexHashString(serializedSignedTransaction);
             return signedTx;
 
         }

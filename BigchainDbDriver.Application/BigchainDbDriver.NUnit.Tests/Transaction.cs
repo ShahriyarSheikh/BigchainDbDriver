@@ -70,6 +70,8 @@ namespace BigchainDbDriver.NUnit.Tests
             var expectedUri = "dCQ-qJBCsSNC6AGifLWu0Cuhv38V707Tk0C8TdR-R1k";
 
             var generatedUri = pubKey.EncodeToBase64Url();
+
+            Assert.AreEqual(expectedUri, generatedUri);
             Assert.Pass();
         }
 
@@ -87,12 +89,27 @@ namespace BigchainDbDriver.NUnit.Tests
         [Test]
         public void ProvidedTx_ShouldReturnValidSignedTx() {
             var keypairgenerator = new Ed25519Keypair();
-            var keypair = keypairgenerator.GenerateKeyPair(new byte[32]);
+            var keypair = keypairgenerator.GenerateKeyPair();
 
             var tx = GetMockResponseTx(keypair.PublicKey);
             var signTx = new Bigchain_SignTransaction();
-            var signedTx = signTx.SignTransaction(tx, new List<string> { $"{keypair.PrivateKey}{keypair.PublicKey}" });
+            var signedTx = signTx.SignTransaction(tx, new List<string> { $"{keypair.ExpandedPrivateKey}" });
             Assert.Pass();
+        }
+
+        [Test]
+        public void ProvidedString_ShouldReturnValidSha256Hash() {
+            var stringToHash = "abc";
+            var expectedHash = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
+
+            var sha = new Sha256();
+
+            var actualHash = sha.SHA256HexHashString(stringToHash);
+
+            Assert.AreEqual(expectedHash, actualHash);
+
+
+
         }
 
 

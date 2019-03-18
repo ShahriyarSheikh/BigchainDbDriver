@@ -34,7 +34,8 @@ namespace BigchainDbDriver.KeyPair
 
             return new GeneratedKeyPair {
                 PrivateKey = encoder.EncodeData(_sk),
-                PublicKey = encoder.EncodeData(pk)
+                PublicKey = encoder.EncodeData(pk),
+                ExpandedPrivateKey = encoder.EncodeData(sk)
             };
         }
 
