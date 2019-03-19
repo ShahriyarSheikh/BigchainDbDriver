@@ -70,7 +70,7 @@ namespace BigchainDbDriver.NUnit.Tests
             var pubKey = "WuD9VBm3kAUKkZ2Cvvij4QsfkGFqxvfX6qGg6qQxsZs";
             var expectedUri = "dCQ-qJBCsSNC6AGifLWu0Cuhv38V707Tk0C8TdR-R1k";
 
-            var generatedUri = pubKey.EncodeToBase64Url();
+            var generatedUri = Base64Url.Encode(pubKey.ToByteArray());
 
             Assert.AreEqual(expectedUri, generatedUri);
         }

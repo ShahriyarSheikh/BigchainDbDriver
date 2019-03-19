@@ -1,26 +1,37 @@
 ﻿using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BigchainDbDriver.Common.Cryptography
 {
-    public class Asn1 
+    public class Asn1lib 
     {
         private readonly byte[] _publicKey;
         private readonly byte[] _signature;
         private const string TYPE_ASN1_FULFILLMENT = "ed25519Sha256Fulfillment";
+        private readonly byte[] checking = new byte[] {
+            164,100,128,32,188,164,175,37,42,70,241,134,75,6,132,76,251,211,122,145,56,150,41,41,129,185,89,
+            201,220,175,16,41,102,17,235,154,129,64,65,103,211,74,215,107,15,14,156,67,45,241,223,243,6,62,204,168,198,37,
+            78,11,161,180,12,23,240,147,233,104,148,0,135,64,43,61,152,30,10,238,67,221,65,22,36,96,136,1,235,165,198,112,86,
+            224,14,65,28,157,248,221,3,84,80,7
+        };
 
-        public Asn1(byte[] publicKey, byte[] signature)
+        public Asn1lib(byte[] publicKey, byte[] signature)
         {
             _publicKey = publicKey;
             _signature = signature;
         }
-
+        //http://www.bouncycastle.org/csharp/index.html
         //TODO: Figure out asn1 der encoding and return it from this function
-        public dynamic SerializeBinary() {
+        public byte[] SerializeBinary() {
+            var res = GetAsn1Json();
 
-            return GetAsn1Json();
+
+            var obj = Asn1Object.FromByteArray(checking);
+            var asn1encoder =  obj.GetDerEncoded();
+            return asn1encoder;
         }
 
 
@@ -48,6 +59,10 @@ namespace BigchainDbDriver.Common.Cryptography
                 }
             };
         }
+
+
+
+        
 
 
     }

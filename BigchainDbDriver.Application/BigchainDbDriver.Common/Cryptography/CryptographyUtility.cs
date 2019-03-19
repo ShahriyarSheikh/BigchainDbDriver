@@ -8,9 +8,6 @@ namespace BigchainDbDriver.Common.Cryptography
 {
     public static class CryptographyUtility
     {
-        public static string EncodeToBase64Url(this string str) {
-            return Base64Url.Encode(str);
-        }
 
         public static byte[] Ed25519Sign(byte[] pubKey, byte[] expandedPrivKey) {
 
@@ -18,7 +15,7 @@ namespace BigchainDbDriver.Common.Cryptography
         }
 
         public static string SerializeUri(byte[] serializedJson) {
-            return EncodeToBase64Url(Convert.ToBase64String(serializedJson));
+            return Base64Url.Encode(serializedJson);
         }
 
         public static bool VerifySignature(this byte[] signature, byte[] message, byte[] publicKey) {

@@ -16,5 +16,9 @@ namespace BigchainDbDriver.Common
         public static byte[] ToByteArray(this string str) {
             return Encoding.ASCII.GetBytes(str);
         }
+
+        public static string ToStringAscii(this byte[] buffer) {
+            return Encoding.ASCII.GetString(buffer);
+        }
     }
 }
