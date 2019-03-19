@@ -13,7 +13,6 @@ namespace BigchainDbDriver.KeyPair
 {
     public class Ed25519Keypair
     {
-        private readonly string publicKey = "46HZkdTMr4MAwgYbXaqBaztPvzvutyEVBp91EuPPonHU";
         private readonly int bytesSupportedbyEd25519 = 32;
         public Ed25519Keypair()
         {

@@ -54,6 +54,7 @@ namespace BigchainDbDriver.Transactions
                 var transactionHash = sha3.ComputeHash(Encoding.ASCII.GetBytes(transactionUniqueFulfillment));
 
                 var signedFulfillment = CryptographyUtility.Ed25519Sign(pubKeyBuffer, privKeyBuffer);
+
                 var fulfillmentUri = CryptographyUtility.SerializeUri(signedFulfillment);
                 signedTx.Inputs[index].Fulfillment = fulfillmentUri;
                 index++;
