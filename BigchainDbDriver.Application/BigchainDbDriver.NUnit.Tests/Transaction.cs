@@ -90,13 +90,14 @@ namespace BigchainDbDriver.NUnit.Tests
         public void ProvidedTx_ShouldReturnValidSignedTx() {
             var keypairgenerator = new Ed25519Keypair();
             var keypair = keypairgenerator.GenerateKeyPair(new byte[32]);
+            var expectedHash = "0b876b6a1604f6f313e63640d6f90eb09d85d56c2036034bc7dbf039cf585f33";
 
             var tx = GetMockResponseTx(keypair.PublicKey);
             var signTx = new Bigchain_SignTransaction();
             var signedTx = signTx.SignTransaction(tx, new List<string> { $"{keypair.ExpandedPrivateKey}" });
             var serializedTx = JsonUtility.SerializeTransactionIntoCanonicalString(JsonConvert.SerializeObject(signedTx));
 
-            Assert.AreEqual("0b876b6a1604f6f313e63640d6f90eb09d85d56c2036034bc7dbf039cf585f33", signedTx.Id);
+            Assert.AreEqual(expectedHash, signedTx.Id);
 
         }
 
@@ -110,9 +111,17 @@ namespace BigchainDbDriver.NUnit.Tests
             var actualHash = sha.SHA256HexHashString(stringToHash);
 
             Assert.AreEqual(expectedHash, actualHash);
+        }
 
+        [Test]
+        public void ProvidedString_ShouldReturnValidSha3256() {
+            var stringToHash = "abc";
+            var expectedHash = "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532";
 
+            var sha3 = new Sha3_256();
 
+            var actualHash = sha3.ComputeHash(stringToHash);
+            Assert.AreEqual(expectedHash, actualHash);
         }
 
 

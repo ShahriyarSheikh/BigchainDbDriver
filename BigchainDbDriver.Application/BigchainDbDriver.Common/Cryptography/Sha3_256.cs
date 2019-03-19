@@ -13,5 +13,12 @@ namespace BigchainDbDriver.Common.Cryptography
             var result = sha.ComputeHash(buffer);
             return result.ToHex();
         }
+
+        public string ComputeHash(string str) {
+            var buffer = Encoding.ASCII.GetBytes(str);
+            var sha = Sha3.Sha3256();
+            var result = sha.ComputeHash(buffer);
+            return result.ToHex();
+        }
     }
 }
