@@ -69,7 +69,6 @@ namespace BigchainDbDriver.NUnit.Tests
         public void ProvidedPubKey_ShouldGeneratedValidCcUrl() {
             var pubKey = "WuD9VBm3kAUKkZ2Cvvij4QsfkGFqxvfX6qGg6qQxsZs";
             var expectedUri = "dCQ-qJBCsSNC6AGifLWu0Cuhv38V707Tk0C8TdR-R1k";
-            var abc = Asn1.CheckingAsn1();
 
             var generatedUri = pubKey.EncodeToBase64Url();
 
