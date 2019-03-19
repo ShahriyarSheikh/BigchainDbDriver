@@ -49,10 +49,6 @@ namespace BigchainDbDriver.General
             return (responseContent,response.StatusCode);
         }
 
-
-
-
-
         private void EnsureClient()
         {
             if (client != null) return;
@@ -73,13 +69,11 @@ namespace BigchainDbDriver.General
             { return true; };
         }
 
-
         public Uri GetServerUri()
         {
             var parsedUrl = new Uri(_path);
             return parsedUrl;
         }
-
 
     }
 }

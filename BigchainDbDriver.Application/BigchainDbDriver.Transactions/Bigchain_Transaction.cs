@@ -38,7 +38,7 @@ namespace BigchainDbDriver.Transactions
 
 		}
 
-        public TxTemplate MakeTransferTransaction(dynamic unspentOutputs, dynamic outputs, dynamic metadata) {
+        public TxTemplate MakeTransferTransaction(dynamic unspentOutputs, List<Output> outputs, dynamic metadata) {
 
             var inputList = new List<InputTemplate>();
             foreach (var output in unspentOutputs) {

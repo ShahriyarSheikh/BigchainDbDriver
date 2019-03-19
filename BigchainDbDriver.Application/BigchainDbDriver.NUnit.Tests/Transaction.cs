@@ -5,6 +5,7 @@ using BigchainDbDriver.Common.Cryptography;
 using BigchainDbDriver.General;
 using BigchainDbDriver.KeyPair;
 using BigchainDbDriver.Transactions;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Net;
@@ -68,11 +69,11 @@ namespace BigchainDbDriver.NUnit.Tests
         public void ProvidedPubKey_ShouldGeneratedValidCcUrl() {
             var pubKey = "WuD9VBm3kAUKkZ2Cvvij4QsfkGFqxvfX6qGg6qQxsZs";
             var expectedUri = "dCQ-qJBCsSNC6AGifLWu0Cuhv38V707Tk0C8TdR-R1k";
+            var abc = Asn1.CheckingAsn1();
 
             var generatedUri = pubKey.EncodeToBase64Url();
 
             Assert.AreEqual(expectedUri, generatedUri);
-            Assert.Pass();
         }
 
         [Test, Order(2)]
@@ -89,12 +90,15 @@ namespace BigchainDbDriver.NUnit.Tests
         [Test]
         public void ProvidedTx_ShouldReturnValidSignedTx() {
             var keypairgenerator = new Ed25519Keypair();
-            var keypair = keypairgenerator.GenerateKeyPair();
+            var keypair = keypairgenerator.GenerateKeyPair(new byte[32]);
 
             var tx = GetMockResponseTx(keypair.PublicKey);
             var signTx = new Bigchain_SignTransaction();
             var signedTx = signTx.SignTransaction(tx, new List<string> { $"{keypair.ExpandedPrivateKey}" });
-            Assert.Pass();
+            var serializedTx = JsonUtility.SerializeTransactionIntoCanonicalString(JsonConvert.SerializeObject(signedTx));
+
+            Assert.AreEqual("0b876b6a1604f6f313e63640d6f90eb09d85d56c2036034bc7dbf039cf585f33", signedTx.Id);
+
         }
 
         [Test]
@@ -125,9 +129,9 @@ namespace BigchainDbDriver.NUnit.Tests
                         Kyc = new KycDefinition
                         {
                             Dob = "11/23/1995 12:00:00 AM +00:00",
-                            Nab = "JohnDoe2",
+                            Nab = "JohnDoe3",
                             Pob = "PK",
-                            UserHash = "5c86551688dbd41fdc9ed303"
+                            UserHash = "5c8655be88dbd41fdc9ed307"
                         }
                     }
 

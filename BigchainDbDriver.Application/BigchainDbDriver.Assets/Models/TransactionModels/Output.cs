@@ -7,11 +7,13 @@ namespace BigchainDbDriver.Assets.Models.TransactionModels
 {
     public class Output
     {
-        [JsonProperty("condition")]
-        public MakeEd25519Condition Condition { get; set; }
-        [JsonProperty("amount")]
+        [JsonProperty("amount",Order =1)]
         public string Amount { get; set; }
-        [JsonProperty("public_keys")]
+
+        [JsonProperty("condition", Order = 2)]
+        public MakeEd25519Condition Condition { get; set; }
+
+        [JsonProperty("public_keys", Order = 3)]
         public IList<string> PublicKeys { get; set; }
     }
 }

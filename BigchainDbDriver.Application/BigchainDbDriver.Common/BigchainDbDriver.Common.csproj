@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Base64UrlCore" Version="1.0.0" />
     <PackageReference Include="Chaos.NaCl.Core" Version="1.0.0" />
+    <PackageReference Include="SHA3.Net" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
