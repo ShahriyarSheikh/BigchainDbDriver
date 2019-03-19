@@ -46,14 +46,17 @@ namespace BigchainDbDriver.Transactions
             {
                 var currentPrivKey = privKey;
                 var privKeyBuffer = encoder.DecodeData(currentPrivKey);
-                var pubKeyBuffer = encoder.DecodeData(transaction.Inputs[index].Owners_before[0]);
-                var transactionUniqueFulfillment = transaction.Inputs[index].Fulfills == null ? serializedTransaction + 
-                                                                                                transaction.Inputs[index].Fulfills?.TransactionId + 
-                                                                                                transaction.Inputs[index].Fulfills?.OutputIndex : serializedTransaction;
-
+                var pubKeyBuffer = encoder.DecodeData(transaction.Outputs[0].PublicKeys[0]);
+                var transactionUniqueFulfillment = transaction.Inputs[index].Fulfills == null ? 
+                                                    serializedTransaction + 
+                                                    transaction.Inputs[index].Fulfills?.TransactionId + 
+                                                    transaction.Inputs[index].Fulfills?.OutputIndex : serializedTransaction;
                 var transactionHash = sha3.ComputeHash(Encoding.ASCII.GetBytes(transactionUniqueFulfillment));
+                var signedFulfillment = CryptographyUtility.Ed25519Sign(transactionHash.ToByteArray(), privKeyBuffer);
 
-                var signedFulfillment = CryptographyUtility.Ed25519Sign(pubKeyBuffer, privKeyBuffer);
+                bool verifyFullfill = signedFulfillment.VerifySignature(transactionHash.ToByteArray(), pubKeyBuffer);
+                if (!verifyFullfill)
+                    continue;
 
                 var fulfillmentUri = CryptographyUtility.SerializeUri(signedFulfillment);
                 signedTx.Inputs[index].Fulfillment = fulfillmentUri;

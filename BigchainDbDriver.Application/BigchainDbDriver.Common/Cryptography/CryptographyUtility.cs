@@ -20,5 +20,9 @@ namespace BigchainDbDriver.Common.Cryptography
         public static string SerializeUri(byte[] serializedJson) {
             return EncodeToBase64Url(Convert.ToBase64String(serializedJson));
         }
+
+        public static bool VerifySignature(this byte[] signature, byte[] message, byte[] publicKey) {
+            return Ed25519.Verify(signature, message, publicKey);
+        }
     }
 }

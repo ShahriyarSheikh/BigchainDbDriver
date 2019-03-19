@@ -12,5 +12,9 @@ namespace BigchainDbDriver.Common
                 result.Append(buffer[i].ToString(isUppercase ? "X2" : "x2"));
             return result.ToString();
         }
+
+        public static byte[] ToByteArray(this string str) {
+            return Encoding.ASCII.GetBytes(str);
+        }
     }
 }
