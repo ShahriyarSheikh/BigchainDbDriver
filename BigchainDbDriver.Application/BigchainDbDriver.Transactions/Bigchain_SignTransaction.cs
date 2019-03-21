@@ -58,10 +58,10 @@ namespace BigchainDbDriver.Transactions
                 if (!verifyFullfill)
                     continue;
 
-                var asn1 = new Asn1lib(pubKeyBuffer, signedFulfillment);
-                var aaa = asn1.SerializeBinary();
-                var fulfillmentUri = CryptographyUtility.SerializeUri(asn1.SerializeBinary());
-                //var fulfillmentUri = CryptographyUtility.SerializeUri(signedFulfillment);
+                //var asn1 = new Asn1lib(pubKeyBuffer, signedFulfillment);
+                //var aaa = asn1.SerializeBinary();
+                //var fulfillmentUri = CryptographyUtility.SerializeUri(asn1.SerializeBinary());
+                var fulfillmentUri = CryptographyUtility.SerializeUri(signedFulfillment);
 
                 signedTx.Inputs[index].Fulfillment = fulfillmentUri;
                 index++;
