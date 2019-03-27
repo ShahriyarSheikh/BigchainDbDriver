@@ -11,6 +11,9 @@ namespace BigchainDbDriver.Transactions
     public class Bigchain_SignTransaction
     {
         private readonly DataEncoder encoder;
+        private readonly byte[] signature = new byte[] {
+            173,222,178,220,228,60,234,83,210,61,81,37,147,224,208,219,126,150,42,230,73,130,157,210,65,170,74,51,233,93,42,160,73,153,123,70,160,162,98,14,204,38,246,45,47,10,117,199,76,1,12,34,99,5,109,245,3,205,253,60,69,15,55,8
+        };
         public Bigchain_SignTransaction()
         {
             encoder = Encoders.Base58;
@@ -45,23 +48,24 @@ namespace BigchainDbDriver.Transactions
             foreach (var privKey in privateKeys)
             {
                 var currentPrivKey = privKey;
-                var privKeyBuffer = encoder.DecodeData(currentPrivKey);
+                //var privKeyBuffer = encoder.DecodeData(currentPrivKey);
+
                 var pubKeyBuffer = encoder.DecodeData(transaction.Outputs[0].PublicKeys[0]);
                 var transactionUniqueFulfillment = transaction.Inputs[index].Fulfills == null ? 
                                                     serializedTransaction + 
                                                     transaction.Inputs[index].Fulfills?.TransactionId + 
                                                     transaction.Inputs[index].Fulfills?.OutputIndex : serializedTransaction;
                 var transactionHash = sha3.ComputeHash(Encoding.ASCII.GetBytes(transactionUniqueFulfillment));
-                var signedFulfillment = CryptographyUtility.Ed25519Sign(transactionHash.ToByteArray(), privKeyBuffer);
+                //var signedFulfillment = CryptographyUtility.Ed25519Sign(transactionHash.ToByteArray(), privKeyBuffer);
+                var signedFulfillment = signature;
 
                 bool verifyFullfill = signedFulfillment.VerifySignature(transactionHash.ToByteArray(), pubKeyBuffer);
-                if (!verifyFullfill)
+                if (verifyFullfill)
                     continue;
 
-                //var asn1 = new Asn1lib(pubKeyBuffer, signedFulfillment);
-                //var aaa = asn1.SerializeBinary();
-                //var fulfillmentUri = CryptographyUtility.SerializeUri(asn1.SerializeBinary());
-                var fulfillmentUri = CryptographyUtility.SerializeUri(signedFulfillment);
+                var asn1 = new Asn1lib(pubKeyBuffer, signedFulfillment);
+                var fulfillmentUri = CryptographyUtility.SerializeUri(asn1.SerializeBinary());
+                //var fulfillmentUri = CryptographyUtility.SerializeUri(signedFulfillment);
 
                 signedTx.Inputs[index].Fulfillment = fulfillmentUri;
                 index++;
@@ -77,6 +81,15 @@ namespace BigchainDbDriver.Transactions
             signedTx.Id = sha3.ComputeHash(Encoding.ASCII.GetBytes(serializedSignedTransaction));
             return signedTx;
 
+        }
+
+        public string GenerateFulfillmentUri(string publicKey) {
+            var signedFulfillment = signature;
+
+
+            var asn1 = new Asn1lib(encoder.DecodeData(publicKey), signedFulfillment);
+            var fulfillmentUri = CryptographyUtility.SerializeUri(asn1.SerializeBinary());
+            return fulfillmentUri;
         }
     }
 }

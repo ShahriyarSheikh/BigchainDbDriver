@@ -102,6 +102,24 @@ namespace BigchainDbDriver.NUnit.Tests
         }
 
         [Test]
+        public void Provided_Fulfillment_Should_Return_DerEncodedFullfillment() {
+            var expectedFulfillment = "pGSAIJ7l9L5xTG7AbHGkwMpx-w_GYsEjtHUL9z8rirheWkkjgUCt3rLc5DzqU9I9USWT4NDbfpYq5kmCndJBqkoz6V0qoEmZe0agomIOzCb2LS8KdcdMAQwiYwVt9QPN_TxFDzcI";
+            var transactionHash = "28a985bcf3b46a6895035b9f0fb7962190f76316eb46c5a0f3450195200b5780";
+            var fulfillment = "ni:///sha-256;NAgseHeCPxu1v5vqPE-mF_IFk6EqBdk7YuAW3LltFAM?fpt=ed25519-sha-256&cost=131072";
+            var keyPair = new GeneratedKeyPair()
+            {
+                PrivateKey = "8GryPKkxrDyAeqgtcBWi1GnFEujtqvkrayhEWSmkJ85v",
+                PublicKey = "BhGnrL4bstujvcB94zBJJ21cWQ2j6ei8cMjUxGWCjbWi"
+            };
+
+            var signTx = new Bigchain_SignTransaction();
+            var fulfillmentUri = signTx.GenerateFulfillmentUri(keyPair.PrivateKey);
+
+            Assert.AreEqual(expectedFulfillment, fulfillmentUri);
+
+        }
+
+        [Test]
         public void ProvidedString_ShouldReturnValidSha256Hash() {
             var stringToHash = "abc";
             var expectedHash = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
@@ -136,10 +154,10 @@ namespace BigchainDbDriver.NUnit.Tests
                     {
                         Kyc = new KycDefinition
                         {
-                            Dob = "11/23/1995 12:00:00 AM +00:00",
-                            Nab = "JohnDoe3",
-                            Pob = "PK",
-                            UserHash = "5c8655be88dbd41fdc9ed307"
+                            Dob = "7/19/1988 12:00:00 AM +05:00",
+                            Nab = "Hang MioLoi",
+                            Pob = "CN",
+                            UserHash = "5c9b0ddd16f0d6471c661c0e"
                         }
                     }
 

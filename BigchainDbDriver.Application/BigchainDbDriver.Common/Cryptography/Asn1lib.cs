@@ -2,6 +2,7 @@
 using Org.BouncyCastle.Asn1;
 using System;
 using System.IO;
+using System.Numerics;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace BigchainDbDriver.Common.Cryptography
@@ -28,8 +29,31 @@ namespace BigchainDbDriver.Common.Cryptography
         public byte[] SerializeBinary() {
             var res = GetAsn1Json();
 
+            var v = new Asn1EncodableVector();
+            v.Add(new DerOctetString(res.Value.PublicKey));
+            v.Add(new DerOctetString(res.Value.Signature));
 
-            var obj = Asn1Object.FromByteArray(checking);
+            //TODO: Figure out why sequence is not generating proper fulfillmentUri
+            MemoryStream bOut = new MemoryStream();
+            DerSequenceGenerator seqGen1 = new DerSequenceGenerator(bOut);
+
+            seqGen1.AddObject(new DerTaggedObject(1));
+            seqGen1.AddObject(v[0]);
+
+            DerSequenceGenerator seqGen2 = new DerSequenceGenerator(seqGen1.GetRawOutputStream(), 1, false);
+
+            seqGen2.AddObject(new DerTaggedObject(1));
+            seqGen2.AddObject(v[1]);
+
+            seqGen2.Close();
+
+            seqGen1.Close();
+
+
+            var chec1 = bOut.ToArray();
+
+
+            var obj = Asn1Object.FromByteArray(chec1);
             var asn1encoder =  obj.GetDerEncoded();
             return asn1encoder;
         }
