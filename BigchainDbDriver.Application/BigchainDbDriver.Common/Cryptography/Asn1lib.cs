@@ -40,12 +40,12 @@ namespace BigchainDbDriver.Common.Cryptography
             seqGen1.AddObject(new DerOctetString(res.Value.PublicKey));
             //seqGen1.AddObject(v[0]);
 
-            DerSequenceGenerator seqGen2 = new DerSequenceGenerator(seqGen1.GetRawOutputStream(), 4, false);
+            //DerSequenceGenerator seqGen2 = new DerSequenceGenerator(seqGen1.GetRawOutputStream(), 4, false);
 
-            seqGen2.AddObject(new DerOctetString(res.Value.Signature));
+            seqGen1.AddObject(new DerOctetString(res.Value.Signature));
             //seqGen2.AddObject(v[1]);
 
-            seqGen2.Close();
+            //seqGen2.Close();
 
             seqGen1.Close();
 
