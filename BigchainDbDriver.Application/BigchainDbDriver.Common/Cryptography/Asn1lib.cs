@@ -29,21 +29,21 @@ namespace BigchainDbDriver.Common.Cryptography
         public byte[] SerializeBinary() {
             var res = GetAsn1Json();
 
-            var v = new Asn1EncodableVector();
-            v.Add(new DerOctetString(res.Value.PublicKey));
-            v.Add(new DerOctetString(res.Value.Signature));
+            //var v = new Asn1EncodableVector();
+            //v.Add(new DerOctetString(res.Value.PublicKey));
+            //v.Add(new DerOctetString(res.Value.Signature));
 
             //TODO: Figure out why sequence is not generating proper fulfillmentUri
             MemoryStream bOut = new MemoryStream();
             DerSequenceGenerator seqGen1 = new DerSequenceGenerator(bOut);
+            
+            seqGen1.AddObject(new DerOctetString(res.Value.PublicKey));
+            //seqGen1.AddObject(v[0]);
 
-            seqGen1.AddObject(new DerTaggedObject(1));
-            seqGen1.AddObject(v[0]);
+            DerSequenceGenerator seqGen2 = new DerSequenceGenerator(seqGen1.GetRawOutputStream(), 4, false);
 
-            DerSequenceGenerator seqGen2 = new DerSequenceGenerator(seqGen1.GetRawOutputStream(), 1, false);
-
-            seqGen2.AddObject(new DerTaggedObject(1));
-            seqGen2.AddObject(v[1]);
+            seqGen2.AddObject(new DerOctetString(res.Value.Signature));
+            //seqGen2.AddObject(v[1]);
 
             seqGen2.Close();
 

@@ -5,6 +5,7 @@ using BigchainDbDriver.Common.Cryptography;
 using BigchainDbDriver.General;
 using BigchainDbDriver.KeyPair;
 using BigchainDbDriver.Transactions;
+using NBitcoin.DataEncoders;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
@@ -89,7 +90,7 @@ namespace BigchainDbDriver.NUnit.Tests
         [Test]
         public void ProvidedTx_ShouldReturnValidSignedTx() {
             var keypairgenerator = new Ed25519Keypair();
-            var keypair = keypairgenerator.GenerateKeyPair(new byte[32]);
+            var keypair = keypairgenerator.GenerateKeyPair();
             var expectedHash = "0b876b6a1604f6f313e63640d6f90eb09d85d56c2036034bc7dbf039cf585f33";
 
             var tx = GetMockResponseTx(keypair.PublicKey);
@@ -103,17 +104,18 @@ namespace BigchainDbDriver.NUnit.Tests
 
         [Test]
         public void Provided_Fulfillment_Should_Return_DerEncodedFullfillment() {
-            var expectedFulfillment = "pGSAIJ7l9L5xTG7AbHGkwMpx-w_GYsEjtHUL9z8rirheWkkjgUCt3rLc5DzqU9I9USWT4NDbfpYq5kmCndJBqkoz6V0qoEmZe0agomIOzCb2LS8KdcdMAQwiYwVt9QPN_TxFDzcI";
+            var expectedFulfillment = "pGSAIOwsDX_8KpzAef-aHlT1QXPnf23YDNEHK26-hw9xtTgEgUDhORNF-ZyNX9_Ymdukyxit-tWFur2OFZokgxD97_Mzt7C67cDhL9P-FelNFJV0srFaGxmw5fQ1kRYTemee3P4J";
             var transactionHash = "28a985bcf3b46a6895035b9f0fb7962190f76316eb46c5a0f3450195200b5780";
             var fulfillment = "ni:///sha-256;NAgseHeCPxu1v5vqPE-mF_IFk6EqBdk7YuAW3LltFAM?fpt=ed25519-sha-256&cost=131072";
+            var signedTxId = "f84adc4d2dc630f4f3380b94bd82a196e40907bb55cddb7822842703c789246d";
             var keyPair = new GeneratedKeyPair()
             {
-                PrivateKey = "8GryPKkxrDyAeqgtcBWi1GnFEujtqvkrayhEWSmkJ85v",
-                PublicKey = "BhGnrL4bstujvcB94zBJJ21cWQ2j6ei8cMjUxGWCjbWi"
+                PrivateKey = "8hiZ8FPQLQnmFqXg8T1L3tgkJvLPeZXnGuThprDDJtQR",
+                PublicKey = "GtvBGsnVhGnqR1RswqT3KSwdoU3UW7w23ukmDaH7uAEF"
             };
 
             var signTx = new Bigchain_SignTransaction();
-            var fulfillmentUri = signTx.GenerateFulfillmentUri(keyPair.PrivateKey);
+            var fulfillmentUri = signTx.GenerateFulfillmentUri(keyPair.PublicKey);
 
             Assert.AreEqual(expectedFulfillment, fulfillmentUri);
 
@@ -132,9 +134,21 @@ namespace BigchainDbDriver.NUnit.Tests
         }
 
         [Test]
+        public void Provided_PublicKey_Should_Return_Valid_Bytes() {
+            byte[] expectedBytes = new byte[] {
+                236,44,13,127,252,42,156,192,121,255,154,30,84,245,65,115,231,127,109,216,12,209,7,43,110,190,135,15,113,181,56,4
+            };
+            var pubKey = "GtvBGsnVhGnqR1RswqT3KSwdoU3UW7w23ukmDaH7uAEF";
+            DataEncoder Encoder = Encoders.Base58;
+
+            Assert.AreEqual(expectedBytes, Encoder.DecodeData(pubKey));
+
+        }
+
+        [Test]
         public void ProvidedString_ShouldReturnValidSha3256() {
-            var stringToHash = "abc";
-            var expectedHash = "3a985da74fe225b2045c172d6bd390bd855f086e3e9d525b46bfe24511431532";
+            var stringToHash = "{\"asset\":{\"data\":{\"kyc\":{\"dob\":\"7/19/1988 12:00:00 AM +05:00\",\"nab\":\"Hang MioLoi\",\"pob\":\"CN\",\"user_hash\":\"5c9b0ddd16f0d6471c661c0e\"}}},\"id\":null,\"inputs\":[{\"fulfillment\":null,\"fulfills\":null,\"owners_before\":[\"GtvBGsnVhGnqR1RswqT3KSwdoU3UW7w23ukmDaH7uAEF\"]}],\"metadata\":{\"Error\":null,\"Status\":\"A\",\"Transaction\":null},\"operation\":\"CREATE\",\"outputs\":[{\"amount\":\"1\",\"condition\":{\"details\":{\"public_key\":\"GtvBGsnVhGnqR1RswqT3KSwdoU3UW7w23ukmDaH7uAEF\",\"type\":\"ed25519-sha-256\"},\"uri\":\"ni:///sha-256;GtvBGsnVhGnqR1RswqT3KSwdoU3UW7w23ukmDaH7uAEF?fpt=ed25519-sha-256&cost=131072\"},\"public_keys\":[\"GtvBGsnVhGnqR1RswqT3KSwdoU3UW7w23ukmDaH7uAEF\"]}],\"version\":\"2.0\"}";
+            var expectedHash = "38f4e09c71930ad235bf89f9772845510832a20ae54cfa1a3ab766531b87837a";
 
             var sha3 = new Sha3_256();
 
@@ -234,7 +248,7 @@ namespace BigchainDbDriver.NUnit.Tests
                                 PublicKey = "EN6jFN4LAaBnzkZQekdzYU5XUTyKKX5EiUUBnFgfkozQ",
                                 Type = "ed25519-sha-256"
                             },
-                             Uri = "ni:///sha-256;uNxDIG7YMPY7EaAVuF_iyn15sxDLeIEzlox7UQOAdmI?fpt=ed25519-sha-256&cost=131072"
+                             Uri = "ni:///sha-256;sAdXqonGQXqcDfhFR8JchTEYlBXvn15Z_QnEOV-8j5I?fpt=ed25519-sha-256&cost=131072"
 
                         },
                         PublicKeys = new List<string>(){
