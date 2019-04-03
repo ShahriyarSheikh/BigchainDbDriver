@@ -1,8 +1,5 @@
 ﻿using SHA3.Net;
-using System;
-using System.Collections.Generic;
 using System.Text;
-using SHA3.Net;
 
 namespace BigchainDbDriver.Common.Cryptography
 {

@@ -88,9 +88,9 @@ namespace BigchainDbDriver.Transactions
         public string GenerateFulfillmentUri(string publicKey) {
             var signedFulfillment = signature;
 
-
             var asn1 = new Asn1lib(encoder.DecodeData(publicKey), signedFulfillment);
-            var fulfillmentUri = CryptographyUtility.SerializeUri(asn1.SerializeBinary());
+            var serializedUriData = asn1.SerializeBinary();
+            var fulfillmentUri = CryptographyUtility.SerializeUri(serializedUriData);
             return fulfillmentUri;
         }
     }

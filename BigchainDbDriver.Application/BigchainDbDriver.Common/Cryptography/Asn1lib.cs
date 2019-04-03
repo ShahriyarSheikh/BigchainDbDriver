@@ -35,14 +35,13 @@ namespace BigchainDbDriver.Common.Cryptography
 
             //TODO: Figure out why sequence is not generating proper fulfillmentUri
             MemoryStream bOut = new MemoryStream();
-            DerSequenceGenerator seqGen1 = new DerSequenceGenerator(bOut);
-            
-            seqGen1.AddObject(new DerOctetString(res.Value.PublicKey));
+            DerSequenceGenerator seqGen1 = new DerSequenceGenerator(bOut, 4, false);
+
+            seqGen1.AddObject(new DerTaggedObject(false, 0, new DerOctetString(res.Value.PublicKey)));
             //seqGen1.AddObject(v[0]);
 
             //DerSequenceGenerator seqGen2 = new DerSequenceGenerator(seqGen1.GetRawOutputStream(), 4, false);
-
-            seqGen1.AddObject(new DerOctetString(res.Value.Signature));
+            seqGen1.AddObject(new DerTaggedObject(false, 1, new DerOctetString(res.Value.Signature)));
             //seqGen2.AddObject(v[1]);
 
             //seqGen2.Close();
