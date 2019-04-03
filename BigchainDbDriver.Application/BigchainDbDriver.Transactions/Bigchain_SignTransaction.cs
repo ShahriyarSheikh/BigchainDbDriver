@@ -16,6 +16,7 @@ namespace BigchainDbDriver.Transactions
             21,154,36,131,16,253,239,243,51,183,176,186,237,192,225,47,211,254,21,233,77,20,149,
             116,178,177,90,27,25,176,229,244,53,145,22,19,122,103,158,220,254,9
         };
+
         public Bigchain_SignTransaction()
         {
             encoder = Encoders.Base58;
@@ -65,8 +66,8 @@ namespace BigchainDbDriver.Transactions
                 if (verifyFullfill)
                     continue;
 
-                var asn1 = new Asn1lib(pubKeyBuffer, signedFulfillment);
-                var fulfillmentUri = CryptographyUtility.SerializeUri(asn1.SerializeBinary());
+                var asn1 = new Asn1lib(pubKeyBuffer);
+                var fulfillmentUri = CryptographyUtility.SerializeUri(asn1.SerializeBinary(signedFulfillment));
                 //var fulfillmentUri = CryptographyUtility.SerializeUri(signedFulfillment);
 
                 signedTx.Inputs[index].Fulfillment = fulfillmentUri;
@@ -88,8 +89,8 @@ namespace BigchainDbDriver.Transactions
         public string GenerateFulfillmentUri(string publicKey) {
             var signedFulfillment = signature;
 
-            var asn1 = new Asn1lib(encoder.DecodeData(publicKey), signedFulfillment);
-            var serializedUriData = asn1.SerializeBinary();
+            var asn1 = new Asn1lib(encoder.DecodeData(publicKey));
+            var serializedUriData = asn1.SerializeBinary(signature);
             var fulfillmentUri = CryptographyUtility.SerializeUri(serializedUriData);
             return fulfillmentUri;
         }

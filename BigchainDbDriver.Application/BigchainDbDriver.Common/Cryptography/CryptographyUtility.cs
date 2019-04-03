@@ -1,7 +1,10 @@
 ﻿using Base64UrlCore;
 using Chaos.NaCl;
+using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Crypto.Digests;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace BigchainDbDriver.Common.Cryptography
