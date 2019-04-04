@@ -8,8 +8,10 @@ using BigchainDbDriver.Transactions;
 using NBitcoin.DataEncoders;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BigchainDbDriver.NUnit.Tests
@@ -19,6 +21,12 @@ namespace BigchainDbDriver.NUnit.Tests
     {
         private readonly GeneratedKeyPair generatedKeyPair;
         private readonly string bigchainhost = "http://192.168.100.10:9984/api/v1/";
+
+        private readonly byte[] signature = new byte[] {
+             225,57,19,69,249,156,141,95,223,216,153,219,164,203,24,173,250,213,133,186,189,142,
+            21,154,36,131,16,253,239,243,51,183,176,186,237,192,225,47,211,254,21,233,77,20,149,
+            116,178,177,90,27,25,176,229,244,53,145,22,19,122,103,158,220,254,9
+        };
 
         public Transaction()
         {
@@ -58,7 +66,7 @@ namespace BigchainDbDriver.NUnit.Tests
 
             TxTemplate txTemplate = transaction.MakeCreateTransaction(assets,
                 metadata,
-                transaction.MakeOutput(transaction.MakeEd25519Condition(generatedKeyPair.PublicKey)),
+                transaction.MakeOutput(Asn1ConditionsHelper.MakeEd25519Condition(generatedKeyPair.PublicKey)),
                 new List<string> { generatedKeyPair.PublicKey }
                 );
 
@@ -81,32 +89,67 @@ namespace BigchainDbDriver.NUnit.Tests
             Assert.AreEqual(expectedUri, base64UrlEncoded);
         }
 
-        [Test, Order(2)]
-        public async Task ProvidedSignedTx_ShouldPostCommitTransaction()
+        [Test]
+        public void ProvidedTx_ShouldReturnValidSignedTxString()
         {
-            var signedTx = GetMockResponseSignedTx();
+            var expectedSerializedTransaction = "{\"asset\":{\"data\":{\"kyc\":{\"dob\":\"7/19/1988 12:00:00 AM +05:00\",\"nab\":\"Hang MioLoi\",\"pob\":\"CN\",\"user_hash\":\"5c9b0ddd16f0d6471c661c0e\"}}},\"id\":null,\"inputs\":[{\"fulfillment\":null,\"fulfills\":null,\"owners_before\":[\"6up1UDJC2EnReHcdYVZkJdR8hbSym48P5XWiyD1oW2Qm\"]}],\"metadata\":{\"Error\":null,\"Status\":\"A\",\"Transaction\":null},\"operation\":\"CREATE\",\"outputs\":[{\"amount\":\"1\",\"condition\":{\"details\":{\"public_key\":\"6up1UDJC2EnReHcdYVZkJdR8hbSym48P5XWiyD1oW2Qm\",\"type\":\"ed25519-sha-256\"},\"uri\":\"ni:///sha-256;dYgl9YZ2-J8GI8zDqGjGCf-iTRt3-N_au_w6QyexL_4?fpt=ed25519-sha-256&cost=131072\"},\"public_keys\":[\"6up1UDJC2EnReHcdYVZkJdR8hbSym48P5XWiyD1oW2Qm\"]}],\"version\":\"2.0\"}";
 
-            var connection = new BigchainConnection(bigchainhost);
-            var (response, status) = await connection.PostTransactionCommit(signedTx);
+            var keyPair = new GeneratedKeyPair()
+            {
+                ExpandedPrivateKey = "2SmR42zKeTExHeXa5gFCJzfVLzPb843bkv9L9EGNxfABo9roeGWuNvTg5KFCcNoA6xd4VnWnX1yzALSvszBFncGu",
+                PrivateKey = "5ryt9DgJWu2G5Ptzd5CwUXsvw5DKygd4serdMoJ67KCm",
+                PublicKey = "6up1UDJC2EnReHcdYVZkJdR8hbSym48P5XWiyD1oW2Qm"
+            };
 
-            Assert.AreNotEqual(status, HttpStatusCode.BadRequest);
-            Assert.That(status == HttpStatusCode.Accepted || status == HttpStatusCode.Created || status == HttpStatusCode.NoContent);
+            var tx = GetMockResponseTx(keyPair.PublicKey);
+
+            var serializedTx = JsonUtility.SerializeTransactionIntoCanonicalString(JsonConvert.SerializeObject(tx));
+
+            Assert.AreEqual(expectedSerializedTransaction, serializedTx);
         }
 
         [Test]
-        public void ProvidedTx_ShouldReturnValidSignedTx()
+        public void ProvidedTx_ShouldReturnValidSignedTxHash()
         {
-            var keypairgenerator = new Ed25519Keypair();
-            var keypair = keypairgenerator.GenerateKeyPair();
-            var expectedHash = "0b876b6a1604f6f313e63640d6f90eb09d85d56c2036034bc7dbf039cf585f33";
+            var expectedSerializedTransactionHash = "7c93d8e95c6e2d1b6ba6d77020a9e7d09d30c498fcb0485801fc7507fda43fca";
 
-            var tx = GetMockResponseTx(keypair.PublicKey);
+            var keyPair = new GeneratedKeyPair()
+            {
+                ExpandedPrivateKey = "2SmR42zKeTExHeXa5gFCJzfVLzPb843bkv9L9EGNxfABo9roeGWuNvTg5KFCcNoA6xd4VnWnX1yzALSvszBFncGu",
+                PrivateKey = "5ryt9DgJWu2G5Ptzd5CwUXsvw5DKygd4serdMoJ67KCm",
+                PublicKey = "6up1UDJC2EnReHcdYVZkJdR8hbSym48P5XWiyD1oW2Qm"
+            };
+
+            var tx = GetMockResponseTx(keyPair.PublicKey);
+
+            var serializedTransaction = JsonUtility.SerializeTransactionIntoCanonicalString(JsonConvert.SerializeObject(tx));
+
             var signTx = new Bigchain_SignTransaction();
-            var signedTx = signTx.SignTransaction(tx, new List<string> { $"{keypair.ExpandedPrivateKey}" });
+
+            var (txHash, pubKey, signature) = signTx.GetSignature(tx, serializedTransaction, 0, keyPair.ExpandedPrivateKey);
+
+            Assert.AreEqual(expectedSerializedTransactionHash, txHash.ToHex());
+        }
+
+        [Test]
+        public void Provided_Payload_Should_Return_ValidSerializedTx()
+        {
+            var keyPair = new GeneratedKeyPair()
+            {
+                ExpandedPrivateKey = "2SmR42zKeTExHeXa5gFCJzfVLzPb843bkv9L9EGNxfABo9roeGWuNvTg5KFCcNoA6xd4VnWnX1yzALSvszBFncGu",
+                PrivateKey = "5ryt9DgJWu2G5Ptzd5CwUXsvw5DKygd4serdMoJ67KCm",
+                PublicKey = "6up1UDJC2EnReHcdYVZkJdR8hbSym48P5XWiyD1oW2Qm"
+            };
+
+            var expectedHash = "1a7e241014157ffaca8b854c6775186b581d2058a6299b6d4e79437fce4979fc";
+
+            var tx = GetMockResponseTx(keyPair.PublicKey);
+
+            var signTx = new Bigchain_SignTransaction();
+            var signedTx = signTx.SignTransaction(tx, new List<string> { keyPair.ExpandedPrivateKey });
             var serializedTx = JsonUtility.SerializeTransactionIntoCanonicalString(JsonConvert.SerializeObject(signedTx));
 
             Assert.AreEqual(expectedHash, signedTx.Id);
-
         }
 
         [Test]
@@ -116,6 +159,7 @@ namespace BigchainDbDriver.NUnit.Tests
             var transactionHash = "28a985bcf3b46a6895035b9f0fb7962190f76316eb46c5a0f3450195200b5780";
             var fulfillment = "ni:///sha-256;NAgseHeCPxu1v5vqPE-mF_IFk6EqBdk7YuAW3LltFAM?fpt=ed25519-sha-256&cost=131072";
             var signedTxId = "f84adc4d2dc630f4f3380b94bd82a196e40907bb55cddb7822842703c789246d";
+
             var keyPair = new GeneratedKeyPair()
             {
                 PrivateKey = "8hiZ8FPQLQnmFqXg8T1L3tgkJvLPeZXnGuThprDDJtQR",
@@ -123,7 +167,7 @@ namespace BigchainDbDriver.NUnit.Tests
             };
 
             var signTx = new Bigchain_SignTransaction();
-            var fulfillmentUri = signTx.GenerateFulfillmentUri(keyPair.PublicKey);
+            var fulfillmentUri = signTx.GenerateFulfillmentUri(keyPair.PublicKey, signature);
 
             Assert.AreEqual(expectedFulfillment, fulfillmentUri);
 
@@ -135,9 +179,7 @@ namespace BigchainDbDriver.NUnit.Tests
             var stringToHash = "abc";
             var expectedHash = "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad";
 
-            var sha = new Sha256();
-
-            var actualHash = sha.SHA256HexHashString(stringToHash);
+            var actualHash = HashingUtils.SHA256HexHashString(stringToHash);
 
             Assert.AreEqual(expectedHash, actualHash);
         }
@@ -149,9 +191,8 @@ namespace BigchainDbDriver.NUnit.Tests
                 236,44,13,127,252,42,156,192,121,255,154,30,84,245,65,115,231,127,109,216,12,209,7,43,110,190,135,15,113,181,56,4
             };
             var pubKey = "GtvBGsnVhGnqR1RswqT3KSwdoU3UW7w23ukmDaH7uAEF";
-            DataEncoder Encoder = Encoders.Base58;
 
-            Assert.AreEqual(expectedBytes, Encoder.DecodeData(pubKey));
+            Assert.AreEqual(expectedBytes, Encoders.Base58.DecodeData(pubKey));
 
         }
 
@@ -167,6 +208,18 @@ namespace BigchainDbDriver.NUnit.Tests
             Assert.AreEqual(expectedHash, actualHash);
         }
 
+        [Ignore("Integration only")]
+        [Test, Order(2)]
+        public async Task ProvidedSignedTx_ShouldPostCommitTransaction()
+        {
+            var signedTx = GetMockResponseSignedTx();
+
+            var connection = new BigchainConnection(bigchainhost);
+            var (response, status) = await connection.PostTransactionCommit(signedTx);
+
+            Assert.AreNotEqual(status, HttpStatusCode.BadRequest);
+            Assert.That(status == HttpStatusCode.Accepted || status == HttpStatusCode.Created || status == HttpStatusCode.NoContent);
+        }
 
         private TxTemplate GetMockResponseTx(string pubKey)
         {
@@ -205,14 +258,7 @@ namespace BigchainDbDriver.NUnit.Tests
                 Outputs = new List<Output>() {
                     new Output{
                         Amount = "1",
-                        Condition = new MakeEd25519Condition{
-                            Details = new Details{
-                                PublicKey = pubKey,
-                                Type = "ed25519-sha-256"
-                            },
-                             Uri = pubKey.GenerateMockUri()
-
-                        },
+                        Condition = Asn1ConditionsHelper.MakeEd25519Condition(pubKey),
                         PublicKeys = new List<string>(){
                             pubKey
                         }
@@ -223,6 +269,8 @@ namespace BigchainDbDriver.NUnit.Tests
 
         private SignedTxResponse GetMockResponseSignedTx()
         {
+            const string pubKey = "EN6jFN4LAaBnzkZQekdzYU5XUTyKKX5EiUUBnFgfkozQ";
+
             return new SignedTxResponse
             {
                 id = "d48b333ea27d60dae01546a3a184d532e7fad7c7545335ac7d0a32b0fe517a71",
@@ -258,16 +306,9 @@ namespace BigchainDbDriver.NUnit.Tests
                 outputs = new List<Output>() {
                     new Output{
                         Amount = "1",
-                        Condition = new MakeEd25519Condition{
-                            Details = new Details{
-                                PublicKey = "EN6jFN4LAaBnzkZQekdzYU5XUTyKKX5EiUUBnFgfkozQ",
-                                Type = "ed25519-sha-256"
-                            },
-                             Uri = "ni:///sha-256;sAdXqonGQXqcDfhFR8JchTEYlBXvn15Z_QnEOV-8j5I?fpt=ed25519-sha-256&cost=131072"
-
-                        },
+                        Condition = Asn1ConditionsHelper.MakeEd25519Condition(pubKey),
                         PublicKeys = new List<string>(){
-                            "EN6jFN4LAaBnzkZQekdzYU5XUTyKKX5EiUUBnFgfkozQ"
+                            pubKey
                         }
                     }
                 }

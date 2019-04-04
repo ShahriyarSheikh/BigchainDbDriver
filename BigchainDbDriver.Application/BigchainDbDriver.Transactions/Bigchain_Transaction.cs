@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using BigchainDbDriver.Assets.Models.TransactionModels;
 using BigchainDbDriver.Common;
+using BigchainDbDriver.Common.Cryptography;
 using NBitcoin.DataEncoders;
 using Newtonsoft.Json;
 
@@ -78,7 +79,7 @@ namespace BigchainDbDriver.Transactions
 			return tx;
 		}
 
-        public List<Output> MakeOutput(MakeEd25519Condition condition, string amount = "1")
+        public List<Output> MakeOutput(Ed25519Condition condition, string amount = "1")
         {
             IList<string> pubKeys = new List<string>();
 
@@ -95,17 +96,6 @@ namespace BigchainDbDriver.Transactions
 
             return outputs;
 
-        }
-
-        public MakeEd25519Condition MakeEd25519Condition(string pubkey) {
-
-            return new MakeEd25519Condition {
-                Details = new Details {
-                    PublicKey = pubkey,
-                    Type = "ed25519-sha-256"
-                },
-                Uri = pubkey.GenerateMockUri()
-            };
         }
 
 		private List<InputTemplate> makeInputTemplate(List<string> publicKeys, Fulfill fulfills = null, string fulfillment = null)
@@ -134,11 +124,11 @@ namespace BigchainDbDriver.Transactions
 				Version = "2.0"
 			};
 		}
-	}
+    }
 
 	public class TxTemplate : ICloneable {
 		[JsonProperty("id")]
-		public dynamic Id { get; set; }
+		public string Id { get; set; }
 		[JsonProperty("operation")]
 		public dynamic Operation { get; set; }
 		[JsonProperty("outputs")]

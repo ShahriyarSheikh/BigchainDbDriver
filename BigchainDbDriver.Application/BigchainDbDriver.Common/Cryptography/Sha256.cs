@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Org.BouncyCastle.Crypto.Digests;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -6,14 +7,9 @@ using System.Text;
 
 namespace BigchainDbDriver.Common.Cryptography
 {
-    public class Sha256
+    public static class HashingUtils
     {
-        public Sha256()
-        {
-
-        }
-
-        public string GenerateSha256Hash<T>(T obj) {
+        public static string GenerateSha256Hash<T>(T obj) {
 
             var serializedMessage = JsonConvert.SerializeObject(obj);
             var bytesToSign = Encoding.UTF8.GetBytes(serializedMessage);
@@ -27,7 +23,8 @@ namespace BigchainDbDriver.Common.Cryptography
             return Convert.ToBase64String(hash);
         }
 
-        public string GenerateSha256Hash(string rawData) {
+        public static string GenerateSha256Hash(string rawData)
+        {
             using (SHA256 sha256Hash = SHA256.Create())
             {
                 // ComputeHash - returns byte array  
@@ -43,24 +40,34 @@ namespace BigchainDbDriver.Common.Cryptography
             }
         }
 
-        private string ToHex(byte[] bytes, bool upperCase)
-        {
-            StringBuilder result = new StringBuilder(bytes.Length * 2);
-            for (int i = 0; i < bytes.Length; i++)
-                result.Append(bytes[i].ToString(upperCase ? "X2" : "x2"));
-            return result.ToString();
-        }
-
-        public string SHA256HexHashString(string rawData)
+        public static string SHA256HexHashString(string rawData)
         {
             string hashString;
             using (var sha256 = SHA256Managed.Create())
             {
                 var hash = sha256.ComputeHash(Encoding.Default.GetBytes(rawData));
-                hashString = ToHex(hash, false);
+                hashString = hash.ToHex(false);
             }
 
             return hashString;
+        }
+
+        public static byte[] ComputeSha256Hash(byte[] data)
+        {
+            var shaHash = new Sha256Digest();
+            shaHash.BlockUpdate(data, 0, data.Length);
+            byte[] hashedValue = new byte[shaHash.GetDigestSize()];
+            shaHash.DoFinal(hashedValue, 0);
+            return hashedValue;
+        }
+
+        public static byte[] ComputeSha3Hash(byte[] data)
+        {
+            var shaHash = new Sha3Digest();
+            shaHash.BlockUpdate(data, 0, data.Length);
+            byte[] hashedValue = new byte[shaHash.GetDigestSize()];
+            shaHash.DoFinal(hashedValue, 0);
+            return hashedValue;
         }
     }
 }
