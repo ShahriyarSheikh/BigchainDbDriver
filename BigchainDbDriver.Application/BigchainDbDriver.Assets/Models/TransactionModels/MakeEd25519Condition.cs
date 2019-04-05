@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BigchainDbDriver.Assets.Models.TransactionModels
 {
-    public class MakeEd25519Condition
+    public class Ed25519Condition
     {
         [JsonProperty("details")]
         public Details Details { get; set; }
