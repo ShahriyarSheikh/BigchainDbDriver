@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BigchainDbDriver.Assets\BigchainDbDriver.Assets.csproj" />
+    <ProjectReference Include="..\BigchainDbDriver\BigchainDbDriver.csproj" />
   </ItemGroup>
 
 </Project>

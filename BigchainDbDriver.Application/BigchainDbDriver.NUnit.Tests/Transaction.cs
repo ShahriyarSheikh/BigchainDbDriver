@@ -1,4 +1,5 @@
-﻿using BigchainDbDriver.Assets.Models;
+﻿
+using BigchainDbDriver.Assets.Models;
 using BigchainDbDriver.Assets.Models.TransactionModels;
 using BigchainDbDriver.Common;
 using BigchainDbDriver.Common.Cryptography;
@@ -8,10 +9,8 @@ using BigchainDbDriver.Transactions;
 using NBitcoin.DataEncoders;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BigchainDbDriver.NUnit.Tests

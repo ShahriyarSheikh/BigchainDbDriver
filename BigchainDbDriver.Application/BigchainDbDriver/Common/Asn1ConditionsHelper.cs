@@ -1,4 +1,5 @@
-﻿using BigchainDbDriver.Common.Cryptography;
+﻿using BigchainDbDriver.Assets.Models.TransactionModels;
+using BigchainDbDriver.Common.Cryptography;
 using NBitcoin.DataEncoders;
 
 namespace BigchainDbDriver.Common

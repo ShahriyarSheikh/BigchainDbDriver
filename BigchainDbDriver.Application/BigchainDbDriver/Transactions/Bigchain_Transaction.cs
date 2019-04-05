@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using BigchainDbDriver.Assets.Models.TransactionModels;
+using BigchainDbDriver.Common;
+using BigchainDbDriver.Common.Cryptography;
 using NBitcoin.DataEncoders;
 using Newtonsoft.Json;
 
 namespace BigchainDbDriver.Transactions
 {
-    public class Bigchain_Transaction
+	public class Bigchain_Transaction
 	{
         private readonly DataEncoder encoder;
         public Bigchain_Transaction()

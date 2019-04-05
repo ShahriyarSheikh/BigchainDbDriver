@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BigchainDbDriver.KeyPair\BigchainDbDriver.KeyPair.csproj" />
-    <ProjectReference Include="..\BigchainDbDriver.Transactions\BigchainDbDriver.Transactions.csproj" />
+    <ProjectReference Include="..\BigchainDbDriver\BigchainDbDriver.csproj" />
   </ItemGroup>
 
 </Project>
