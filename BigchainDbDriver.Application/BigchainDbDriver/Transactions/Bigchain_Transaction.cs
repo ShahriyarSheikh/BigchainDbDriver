@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using BigchainDbDriver.Assets.Models.TransactionModels;
-using BigchainDbDriver.Common;
-using BigchainDbDriver.Common.Cryptography;
 using NBitcoin.DataEncoders;
 using Newtonsoft.Json;
 
 namespace BigchainDbDriver.Transactions
 {
-	public class Bigchain_Transaction
+    public class Bigchain_Transaction
 	{
         private readonly DataEncoder encoder;
         public Bigchain_Transaction()
@@ -29,7 +26,13 @@ namespace BigchainDbDriver.Transactions
 			var assetsDefinition = new AssetDefinition {
 				Data = assets.Assets.Data ?? null
 			};
-			var _inputs = makeInputTemplate( issuers);
+
+
+            var _inputs = new List<InputTemplate>();
+            foreach (var issuer in issuers) {
+                _inputs.Add(makeInputTemplate(new List<string> { issuer}));
+            }
+			//var _inputs = makeInputTemplate( issuers);
 
 			return MakeTrasnsaction("CREATE", 
                 assetsDefinition, 
@@ -39,49 +42,51 @@ namespace BigchainDbDriver.Transactions
 
 		}
 
-        public TxTemplate MakeTransferTransaction(dynamic unspentOutputs, List<Output> outputs, dynamic metadata) {
 
-            var inputList = new List<InputTemplate>();
-            foreach (var output in unspentOutputs) {
-                var _tx = new
+        public TxTemplate MakeTransferTransaction(List<UnspentOutput> unspentOutputs, List<Output> outputs, dynamic metadata)
+        {
+
+            var inputTemplates = new List<InputTemplate>();
+            foreach (var uo in unspentOutputs)
+            {
+                var tx = uo.Tx;
+                var fulfilledOutput = tx.Outputs[uo.OutputIndex];
+                var transactionLink = new Fulfill
                 {
-                    tx = output.tx,
-                    outputIndex = output.output_index
+                    OutputIndex = uo.OutputIndex.ToString(),
+                    TransactionId = tx.Id
                 };
 
-                //var fulfulledOutput = _tx.outputs[_tx.outputIndex];
-                var fulfilledOutput = output[_tx.outputIndex];
-
-                var transactionLink = new Fulfill{
-                    OutputIndex = _tx.outputIndex,
-                    TransactionId = _tx.tx.id
-                };
-
-                inputList.Add(makeInputTemplate(fulfilledOutput.public_keys, transactionLink));
+                inputTemplates.Add(makeInputTemplate(fulfilledOutput.PublicKeys, transactionLink));
 
             }
 
-            var assetLink = new {
-                id = unspentOutputs[0].tx.operation == "CREATE" ? unspentOutputs[0].tx.id : unspentOutputs[0].tx.asset.id
+            var assetLink = new AssetLink
+            {
+                Id = unspentOutputs[0].Tx.Operation == "CREATE" ? unspentOutputs[0].Tx.Id : unspentOutputs[0].Tx.Asset.Id
             };
 
-            return MakeTrasnsaction("TRANSFER", assetLink, metadata, outputs, inputList);
+            return MakeTrasnsaction("TRANSFER", assetLink, metadata, outputs, inputTemplates);
+
+        }
+
+        private TxTemplate MakeTrasnsaction(string operation, dynamic assets, dynamic metadata = null, List<Output> outputs = null, List<InputTemplate> inputs = null)
+        {
+            var tx = MakeTransactionTemplate();
+            tx.Operation = operation;
+            tx.Asset = assets;
+            tx.Metadata = metadata;
+            tx.Inputs = inputs;
+            tx.Outputs = outputs;
+            return tx;
         }
 
 
-		private TxTemplate MakeTrasnsaction(string operation, dynamic assets, dynamic metadata = null, List<Output> outputs = null, List<InputTemplate> inputs = null) {
-			var tx = MakeTrasactionTemplate();
-			tx.Operation = operation;
-			tx.Asset = assets;
-			tx.Metadata = metadata;
-			tx.Inputs = inputs;
-			tx.Outputs = outputs;
-			return tx;
-		}
+
 
         public List<Output> MakeOutput(Ed25519Condition condition, string amount = "1")
         {
-            IList<string> pubKeys = new List<string>();
+            List<string> pubKeys = new List<string>();
 
             if (condition.Details.Type == "ed25519-sha-256") {
                 pubKeys.Add(condition.Details.PublicKey);
@@ -98,21 +103,16 @@ namespace BigchainDbDriver.Transactions
 
         }
 
-		private List<InputTemplate> makeInputTemplate(List<string> publicKeys, Fulfill fulfills = null, string fulfillment = null)
+		private InputTemplate makeInputTemplate(List<string> publicKeys, Fulfill fulfills = null, string fulfillment = null)
 		{
-			var listOfInputTemplates = new List<InputTemplate>();
-			foreach (var temp in publicKeys) {
-				listOfInputTemplates.Add(new InputTemplate
-				{
-					Fulfillment = fulfillment,
-					Fulfills = fulfills,
-					Owners_before = publicKeys,
-				});
-			}
-			return listOfInputTemplates;
+            return new InputTemplate {
+                Fulfillment = fulfillment,
+                Fulfills = fulfills,
+                Owners_before = publicKeys
+            };
 		}
 
-		private TxTemplate MakeTrasactionTemplate() {
+		private TxTemplate MakeTransactionTemplate() {
 			return new TxTemplate
 			{
 				Id = null,
@@ -124,9 +124,37 @@ namespace BigchainDbDriver.Transactions
 				Version = "2.0"
 			};
 		}
+
+
+
+        public Output MakeTransferOutput(Ed25519Condition condition)
+        {
+            var amount = condition == null ? null : "1";
+
+            if (amount == null)
+                return null;
+
+            var pubKey = new List<string>();
+
+            if (condition.Details.Type == "ed25519-sha-256")
+            {
+                pubKey.Add(condition.Details.PublicKey);
+            }
+
+
+            return new Output
+            {
+                Amount = amount,
+                Condition = condition,
+                PublicKeys = pubKey
+            };
+
+        }
+
+
     }
 
-	public class TxTemplate : ICloneable {
+    public class TxTemplate : ICloneable {
 		[JsonProperty("id")]
 		public string Id { get; set; }
 		[JsonProperty("operation")]

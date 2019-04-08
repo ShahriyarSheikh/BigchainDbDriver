@@ -24,3 +24,5 @@
 /BigchainDbDriver.Application/BigchainDbDriver.General/obj
 /BigchainDbDriver.Application/BigchainDbDriver/obj
 /BigchainDbDriver.Application/BigchainDbDriver/bin/Debug/netcoreapp2.1
+/BigchainDbDriver.Application/BigchainDbDriver.Integration/bin/Debug/netcoreapp2.1
+/BigchainDbDriver.Application/BigchainDbDriver.Integration/obj

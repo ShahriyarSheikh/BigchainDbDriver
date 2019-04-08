@@ -14,6 +14,6 @@ namespace BigchainDbDriver.Assets.Models.TransactionModels
         public Ed25519Condition Condition { get; set; }
 
         [JsonProperty("public_keys", Order = 3)]
-        public IList<string> PublicKeys { get; set; }
+        public List<string> PublicKeys { get; set; }
     }
 }

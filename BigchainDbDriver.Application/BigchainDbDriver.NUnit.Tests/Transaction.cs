@@ -3,15 +3,12 @@ using BigchainDbDriver.Assets.Models;
 using BigchainDbDriver.Assets.Models.TransactionModels;
 using BigchainDbDriver.Common;
 using BigchainDbDriver.Common.Cryptography;
-using BigchainDbDriver.General;
 using BigchainDbDriver.KeyPair;
 using BigchainDbDriver.Transactions;
 using NBitcoin.DataEncoders;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace BigchainDbDriver.NUnit.Tests
 {
@@ -19,7 +16,7 @@ namespace BigchainDbDriver.NUnit.Tests
     class Transaction
     {
         private readonly GeneratedKeyPair generatedKeyPair;
-        private readonly string bigchainhost = "http://192.168.100.10:9984/api/v1/";
+       
 
         private readonly byte[] signature = new byte[] {
              225,57,19,69,249,156,141,95,223,216,153,219,164,203,24,173,250,213,133,186,189,142,
@@ -207,18 +204,7 @@ namespace BigchainDbDriver.NUnit.Tests
             Assert.AreEqual(expectedHash, actualHash);
         }
 
-        [Ignore("Integration only")]
-        [Test, Order(2)]
-        public async Task ProvidedSignedTx_ShouldPostCommitTransaction()
-        {
-            var signedTx = GetMockResponseSignedTx();
 
-            var connection = new BigchainConnection(bigchainhost);
-            var (response, status) = await connection.PostTransactionCommit(signedTx);
-
-            Assert.AreNotEqual(status, HttpStatusCode.BadRequest);
-            Assert.That(status == HttpStatusCode.Accepted || status == HttpStatusCode.Created || status == HttpStatusCode.NoContent);
-        }
 
         private TxTemplate GetMockResponseTx(string pubKey)
         {
@@ -255,54 +241,6 @@ namespace BigchainDbDriver.NUnit.Tests
                 Operation = "CREATE",
                 Version = "2.0",
                 Outputs = new List<Output>() {
-                    new Output{
-                        Amount = "1",
-                        Condition = Asn1ConditionsHelper.MakeEd25519Condition(pubKey),
-                        PublicKeys = new List<string>(){
-                            pubKey
-                        }
-                    }
-                }
-            };
-        }
-
-        private SignedTxResponse GetMockResponseSignedTx()
-        {
-            const string pubKey = "EN6jFN4LAaBnzkZQekdzYU5XUTyKKX5EiUUBnFgfkozQ";
-
-            return new SignedTxResponse
-            {
-                id = "d48b333ea27d60dae01546a3a184d532e7fad7c7545335ac7d0a32b0fe517a71",
-                asset = new AssetDefinition
-                {
-                    Data = new DataDefinition
-                    {
-                        Kyc = new KycDefinition
-                        {
-                            Dob = "11/23/1995 12:00:00 AM +00:00",
-                            Nab = "JohnDoe2",
-                            Pob = "PK",
-                            UserHash = "5c86551688dbd41fdc9ed303"
-                        }
-                    }
-
-                },
-                inputs = new List<InputTemplate>() {
-                   new InputTemplate{
-                       Fulfills = null,
-                       Fulfillment = "pGSAIMaPmqqCAswrUdxfzjgqRQGaIQN8M3yBO2LJoSlZRQXxgUBUm9G4vE7Xy-b4YbHyYAYQOSUJBi5ejXRExz9rflb4LVx6wYgrewwR89TeLC-HeuxbjuckZj7-z37NDPXaw8EB",
-                       Owners_before = new List<string>(){ "EN6jFN4LAaBnzkZQekdzYU5XUTyKKX5EiUUBnFgfkozQ" }
-                   }
-                },
-                metadata = new Metadata
-                {
-                    Error = null,
-                    Status = "A",
-                    Transaction = null
-                },
-                operation = "CREATE",
-                version = "2.0",
-                outputs = new List<Output>() {
                     new Output{
                         Amount = "1",
                         Condition = Asn1ConditionsHelper.MakeEd25519Condition(pubKey),
