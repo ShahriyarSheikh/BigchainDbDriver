@@ -1,8 +1,10 @@
-﻿using BigchainDbDriver.Assets.Models.TransactionModels;
+﻿using BigchainDbDriver.Assets.Models.ResponseModels;
+using BigchainDbDriver.Assets.Models.TransactionModels;
 using BigchainDbDriver.Common;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -28,7 +30,6 @@ namespace BigchainDbDriver.General
             _ignoreSslErrors = ignoreSslErrors;
         }
 
-
         private string GetApiUrls(string endpoint) {
             return _path +  BigchainDbUrls.BigchainDbURLs.GetValueOrDefault(endpoint);
         }
@@ -48,6 +49,18 @@ namespace BigchainDbDriver.General
             var responseContent = await response.Content.ReadAsAsync<SignedTxResponse>();
             return (responseContent,response.StatusCode);
         }
+
+        public async Task<Block> ListBlocks(string transctionId)
+        {
+            EnsureClient();
+            var response = await client.GetAsync($"{GetApiUrls(BigchainDbUrls.Transactions)}?asset_id={transctionId}");
+            if (response.StatusCode != HttpStatusCode.OK) {
+                return null;
+            }
+            var responseContent = await response.Content.ReadAsAsync<List<Block>>();
+            return responseContent[responseContent.Count -1]; //gets latest element
+        }
+
 
         private void EnsureClient()
         {
@@ -74,6 +87,8 @@ namespace BigchainDbDriver.General
             var parsedUrl = new Uri(_path);
             return parsedUrl;
         }
+
+
 
     }
 }

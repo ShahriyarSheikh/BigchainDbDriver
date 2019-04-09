@@ -1,7 +1,11 @@
-﻿using BigchainDbDriver.Assets.Models.TransactionModels;
+﻿using BigchainDbDriver.Assets.Models;
+using BigchainDbDriver.Assets.Models.TransactionModels;
 using BigchainDbDriver.Common;
 using BigchainDbDriver.General;
+using BigchainDbDriver.KeyPair;
 using BigchainDbDriver.Transactions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -28,45 +32,57 @@ namespace BigchainDbDriver.Integration
             Assert.That(status == HttpStatusCode.Accepted || status == HttpStatusCode.Created || status == HttpStatusCode.NoContent);
         }
 
-        [Ignore("Integration Only")]
+        //[Ignore("Integration Only")]
         [Test]
-        public void Provided_Input_Should_Create_And_Make_Transfer_Transaction() {
+        public async Task Provided_Input_Should_Make_Transfer_Transaction_And_PostCommit() {
+            string id = "282137f67ce65e34a9eb13145606d7bf87bdaf9174111d6053002bfc543575c8";
+
+            var generatekp = new Ed25519Keypair();
+            var keys = generatekp.GenerateKeyPair();
+
+            var connection = new BigchainConnection(bigchainhost);
+            var currentBlock = await connection.ListBlocks(id);
 
             Bigchain_Transaction transaction = new Bigchain_Transaction();
             var metadata = new Metadata
             {
-                Error = "",
-                Status = "",
-                Transaction = ""
+                Error = null,
+                Status = "A",
+                Transaction = null
             };
 
-            var block = GetMockResponseTx("45qKQwNdc7qGfkLaKyxK3PwKDTv9S1PdmFLSLX5rfd6k"); //Should come from getLatestBlock(id)
+            currentBlock.Metadata = JObject.FromObject(metadata);
+
 
             var unspentOutput = new UnspentOutput {
-                Tx = block,
+                Tx = currentBlock,
                 OutputIndex = 0
             };
 
-            //MakeOutput(makeEd25519condition(pubkey))
-            var Outputs = new List<Output>() {
-                    new Output{
-                        Amount = "1",
-                        Condition = Asn1ConditionsHelper.MakeEd25519Condition(block.Outputs[0].PublicKeys[0]),
-                        PublicKeys = new List<string>(){
-                            block.Outputs[0].PublicKeys[0]
-                        }
-                    }
-                };
-
+            var Outputs = transaction.MakeOutput(Asn1ConditionsHelper.MakeEd25519Condition(currentBlock.Outputs[0].PublicKeys[0]));
 
             var tx = transaction.MakeTransferTransaction(new List<UnspentOutput> { unspentOutput },
                 Outputs,
                 metadata
                 );
-
+            var signTransaction = new Bigchain_SignTransaction();
+            var signedTx = signTransaction.SignTransaction(tx, new List<string>() { keys.ExpandedPrivateKey});
+            var serializedTransaction = JsonUtility.SerializeTransactionIntoCanonicalString(JsonConvert.SerializeObject(signedTx));
             Assert.Pass();
         }
 
+
+        [Test]
+        public async Task Provided_Id_Should_Get_Latest_Block() {
+            string id = "282137f67ce65e34a9eb13145606d7bf87bdaf9174111d6053002bfc543575c8";
+            string conditionUri = "ni:///sha-256;hUFTY19o_y5APMyCfLVBklcQGd039miQSZ4laq5J9LE?fpt=ed25519-sha-256&cost=131072";
+            string fulfillmentUri = "pGSAIC3QBEk4CgvUFZQmsTO2gvVSq3CYnVQ70tDhb3rnXTTdgUCulBEpnggpXuowmHjzaerliUdlhpVC2HBWBjZ76IWk6HKd6O3RX87D7uvJ8lDdbBKDJgEKIGQapXkTm_s0VcgJ";
+            var connection = new BigchainConnection(bigchainhost);
+            var response = await connection.ListBlocks(id);
+
+            Assert.AreEqual(conditionUri, response.Outputs[0].Condition.Uri);
+            Assert.AreEqual(fulfillmentUri, response.Inputs[0].Fulfillment);
+        }
 
         private SignedTxResponse GetMockResponseSignedTx()
         {

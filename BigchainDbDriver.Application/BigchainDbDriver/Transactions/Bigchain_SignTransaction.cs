@@ -9,6 +9,7 @@ namespace BigchainDbDriver.Transactions
 {
     public class Bigchain_SignTransaction
     {
+
         public TxTemplate SignTransaction(TxTemplate transaction, List<string> privateKeys)
         {
             var signedTx = (TxTemplate)transaction.Clone();
@@ -43,7 +44,7 @@ namespace BigchainDbDriver.Transactions
             var transactionHash = HashingUtils.ComputeSha3Hash(Encoding.UTF8.GetBytes(transactionUniqueFulfillment));
 
             var signature = CryptographyUtility.Ed25519Sign(transactionHash, Encoders.Base58.DecodeData(privKey));
-
+            //var signature = _signature;
             return (transactionHash, pubKeyBuffer, signature);
         }
 

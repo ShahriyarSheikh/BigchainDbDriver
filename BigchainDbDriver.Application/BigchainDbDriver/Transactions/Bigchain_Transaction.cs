@@ -53,7 +53,7 @@ namespace BigchainDbDriver.Transactions
                 var fulfilledOutput = tx.Outputs[uo.OutputIndex];
                 var transactionLink = new Fulfill
                 {
-                    OutputIndex = uo.OutputIndex.ToString(),
+                    OutputIndex = uo.OutputIndex,
                     TransactionId = tx.Id
                 };
 
@@ -80,9 +80,6 @@ namespace BigchainDbDriver.Transactions
             tx.Outputs = outputs;
             return tx;
         }
-
-
-
 
         public List<Output> MakeOutput(Ed25519Condition condition, string amount = "1")
         {

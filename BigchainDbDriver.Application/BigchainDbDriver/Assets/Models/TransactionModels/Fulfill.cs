@@ -8,7 +8,7 @@ namespace BigchainDbDriver.Assets.Models.TransactionModels
     public class Fulfill
     {
         [JsonProperty("output_index")]
-        public string OutputIndex { get; set; }
+        public int OutputIndex { get; set; }
         [JsonProperty("transaction_id")]
         public string TransactionId { get; set; }
     }
