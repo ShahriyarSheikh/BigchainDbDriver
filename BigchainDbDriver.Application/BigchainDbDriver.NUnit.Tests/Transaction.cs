@@ -30,9 +30,10 @@ namespace BigchainDbDriver.NUnit.Tests
             generatedKeyPair = keypair.GenerateKeyPair();
         }
 
-
-        [Test, Order(1)]
-        public void ProvidedInput_Payload_Metadata_Keys_AndMakeCreateTransction()
+        [TestCase("AU8ynfHa1y9ZM3YjzkVr5TcYDBnDnmhr7UBfUnj5hDYM", "ni:///sha-256;cedzINwbzW20m_uphjne5UusQBwu_VGHwYsehAqiuQ0?fpt=ed25519-sha-256&cost=131072")]
+        [TestCase("HpaaTTotR35kdt9HKJfMBKx5FBTH3JLz4gZMqG4Ko4Kg", "ni:///sha-256;jdtM42h066ton_Wzp9HlJ3xLePGaXtjZZxQVRob1Vpg?fpt=ed25519-sha-256&cost=131072")]
+        [TestCase("GrnSgK6oaZB8puXjU87eoXUSfgfcGqXg2Y16J6hKZqWR", "ni:///sha-256;nVoPhxLQCOh6XDztTjYRRG2Zwn7cOqTpMZs_0R8DidY?fpt=ed25519-sha-256&cost=131072")]
+        public void ProvidedInput_Payload_Metadata_Keys_AndMakeCreateTransction(string pubKey, string fulfill)
         {
 
             Bigchain_Transaction transaction = new Bigchain_Transaction();
@@ -62,12 +63,13 @@ namespace BigchainDbDriver.NUnit.Tests
 
             TxTemplate txTemplate = transaction.MakeCreateTransaction(assets,
                 metadata,
-                transaction.MakeOutput(Asn1ConditionsHelper.MakeEd25519Condition(generatedKeyPair.PublicKey)),
-                new List<string> { generatedKeyPair.PublicKey }
+                transaction.MakeOutput(Asn1ConditionsHelper.MakeEd25519Condition(pubKey)),
+                new List<string> { pubKey }
                 );
 
-            Assert.AreEqual(generatedKeyPair.PublicKey, txTemplate.Outputs[0].PublicKeys[0]);
-            Assert.AreEqual(generatedKeyPair.PublicKey, txTemplate.Inputs[0].Owners_before[0]);
+            Assert.AreEqual(pubKey, txTemplate.Outputs[0].PublicKeys[0]);
+            Assert.AreEqual(pubKey, txTemplate.Inputs[0].Owners_before[0]);
+            Assert.AreEqual(txTemplate.Outputs[0].Condition.Uri,fulfill);
         }
 
         [Test]
@@ -122,9 +124,9 @@ namespace BigchainDbDriver.NUnit.Tests
 
             var signTx = new Bigchain_SignTransaction();
 
-            var (txHash, pubKey, signature) = signTx.GetSignature(tx, serializedTransaction, 0, keyPair.ExpandedPrivateKey);
+            SignatureMetadata signatures = signTx.GetSignature(tx, serializedTransaction, 0, keyPair.ExpandedPrivateKey);
 
-            Assert.AreEqual(expectedSerializedTransactionHash, txHash.ToHex());
+            Assert.AreEqual(expectedSerializedTransactionHash, signatures.TransactionHash.ToHex());
         }
 
         [Test]

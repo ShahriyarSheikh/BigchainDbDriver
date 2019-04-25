@@ -1,4 +1,5 @@
-﻿using BigchainDbDriver.Common;
+﻿using BigchainDbDriver.Assets.Models.TransactionModels;
+using BigchainDbDriver.Common;
 using BigchainDbDriver.Common.Cryptography;
 using NBitcoin.DataEncoders;
 using Newtonsoft.Json;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace BigchainDbDriver.Transactions
 {
-    public class Bigchain_SignTransaction
+    public class Bigchain_SignTransaction : IBigchain_SignTransaction
     {
 
         public TxTemplate SignTransaction(TxTemplate transaction, List<string> privateKeys)
@@ -19,14 +20,14 @@ namespace BigchainDbDriver.Transactions
             var index = 0;
             foreach (var privKey in privateKeys)
             {
-                (byte[] transactionHash, byte[] pubKeyBuffer, byte[] signature) = GetSignature(transaction, serializedTransaction, index, privKey);
+                SignatureMetadata signatures = GetSignature(transaction, serializedTransaction, index, privKey);
 
-                bool verifyFullfill = signature.VerifySignature(transactionHash, pubKeyBuffer);
+                bool verifyFullfill = signatures.Signature.VerifySignature(signatures.TransactionHash, signatures.PubKeyBuffer);
                 if (!verifyFullfill)
                     continue;
 
 
-                signedTx.Inputs[index].Fulfillment = GenerateFulfillmentUri(pubKeyBuffer, signature);
+                signedTx.Inputs[index].Fulfillment = GenerateFulfillmentUri(signatures.PubKeyBuffer, signatures.Signature);
                 index++;
             }
 
@@ -35,7 +36,7 @@ namespace BigchainDbDriver.Transactions
             return signedTx;
         }
 
-        public (byte[], byte[], byte[]) GetSignature(TxTemplate transaction, string serializedTransaction, int index, string privKey)
+        public SignatureMetadata GetSignature(TxTemplate transaction, string serializedTransaction, int index, string privKey)
         {
             var pubKeyBuffer = Encoders.Base58.DecodeData(transaction.Outputs[index].PublicKeys[0]);
 
@@ -44,8 +45,13 @@ namespace BigchainDbDriver.Transactions
             var transactionHash = HashingUtils.ComputeSha3Hash(Encoding.UTF8.GetBytes(transactionUniqueFulfillment));
 
             var signature = CryptographyUtility.Ed25519Sign(transactionHash, Encoders.Base58.DecodeData(privKey));
-            //var signature = _signature;
-            return (transactionHash, pubKeyBuffer, signature);
+            //return (transactionHash, pubKeyBuffer, signature);
+            return new SignatureMetadata
+            {
+                PubKeyBuffer = pubKeyBuffer,
+                Signature = signature,
+                TransactionHash = transactionHash
+            };
         }
 
         private static string GetUniqueFulfillment(TxTemplate transaction, string serializedTransaction, int index)

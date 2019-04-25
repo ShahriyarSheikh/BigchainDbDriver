@@ -32,7 +32,7 @@ namespace BigchainDbDriver.Integration
             Assert.That(status == HttpStatusCode.Accepted || status == HttpStatusCode.Created || status == HttpStatusCode.NoContent);
         }
 
-        //[Ignore("Integration Only")]
+        [Ignore("Integration Only")]
         [Test]
         public async Task Provided_Input_Should_Make_Transfer_Transaction_And_PostCommit() {
             string id = "282137f67ce65e34a9eb13145606d7bf87bdaf9174111d6053002bfc543575c8";

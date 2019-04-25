@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using BigchainDbDriver.Assets.Enums;
 using BigchainDbDriver.Assets.Models.TransactionModels;
 using NBitcoin.DataEncoders;
-using Newtonsoft.Json;
 
 namespace BigchainDbDriver.Transactions
 {
-    public class Bigchain_Transaction
-	{
+    public class Bigchain_Transaction : IBigchain_Transaction
+    {
         private readonly DataEncoder encoder;
+        private readonly string Ed25519ConditionType = "ed25519-sha-256";
+
         public Bigchain_Transaction()
         {
              encoder = Encoders.Base58;
         }
 
-        /// <summary>
-        /// Creates a transaction object to be pushed to bigchaindb
-        /// </summary>
-        /// <param name="assets"> dynamic object that can hold anything</param>
-        /// <param name="metadata"> dynamic object that can hold anything</param>
-        /// <param name="outputs"></param>
-        /// <param name="issuers"></param>
-        /// <returns></returns>
+       
 		public TxTemplate MakeCreateTransaction(Asset assets,dynamic metadata, List<Output> outputs, List<string> issuers) {
 			var assetsDefinition = new AssetDefinition {
 				Data = assets.Assets.Data ?? null
@@ -34,7 +28,7 @@ namespace BigchainDbDriver.Transactions
             }
 			//var _inputs = makeInputTemplate( issuers);
 
-			return MakeTrasnsaction("CREATE", 
+			return MakeTrasnsaction(Transaction.CREATE.ToString(), 
                 assetsDefinition, 
                 metadata, 
                 outputs, 
@@ -63,10 +57,10 @@ namespace BigchainDbDriver.Transactions
 
             var assetLink = new AssetLink
             {
-                Id = unspentOutputs[0].Tx.Operation == "CREATE" ? unspentOutputs[0].Tx.Id : unspentOutputs[0].Tx.Asset.Id
+                Id = unspentOutputs[0].Tx.Operation == Transaction.CREATE.ToString() ? unspentOutputs[0].Tx.Id : unspentOutputs[0].Tx.Asset.Id
             };
 
-            return MakeTrasnsaction("TRANSFER", assetLink, metadata, outputs, inputTemplates);
+            return MakeTrasnsaction(Transaction.TRANSFER.ToString(), assetLink, metadata, outputs, inputTemplates);
 
         }
 
@@ -85,7 +79,7 @@ namespace BigchainDbDriver.Transactions
         {
             List<string> pubKeys = new List<string>();
 
-            if (condition.Details.Type == "ed25519-sha-256") {
+            if (condition.Details.Type == Ed25519ConditionType) {
                 pubKeys.Add(condition.Details.PublicKey);
             }
             var outputs = new List<Output>();
@@ -133,7 +127,7 @@ namespace BigchainDbDriver.Transactions
 
             var pubKey = new List<string>();
 
-            if (condition.Details.Type == "ed25519-sha-256")
+            if (condition.Details.Type == Ed25519ConditionType)
             {
                 pubKey.Add(condition.Details.PublicKey);
             }
@@ -148,29 +142,6 @@ namespace BigchainDbDriver.Transactions
 
         }
 
-
-    }
-
-    public class TxTemplate : ICloneable {
-		[JsonProperty("id")]
-		public string Id { get; set; }
-		[JsonProperty("operation")]
-		public dynamic Operation { get; set; }
-		[JsonProperty("outputs")]
-		public List<Output> Outputs { get; set; }
-		[JsonProperty("inputs")]
-		public List<InputTemplate> Inputs { get; set; }
-		[JsonProperty("metadata")]
-		public dynamic Metadata { get; set; }
-		[JsonProperty("asset")]
-		public dynamic Asset { get; set; }
-		[JsonProperty("version")]
-		public string Version { get; set; }
-
-        public virtual object Clone() {
-
-            return this.MemberwiseClone();
-        }
 
     }
 }
