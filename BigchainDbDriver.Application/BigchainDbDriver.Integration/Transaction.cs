@@ -1,7 +1,7 @@
 ﻿using BigchainDbDriver.Assets.Models;
 using BigchainDbDriver.Assets.Models.TransactionModels;
 using BigchainDbDriver.Common;
-using BigchainDbDriver.General;
+using BigchainDbDriver.Client;
 using BigchainDbDriver.KeyPair;
 using BigchainDbDriver.Transactions;
 using Newtonsoft.Json;

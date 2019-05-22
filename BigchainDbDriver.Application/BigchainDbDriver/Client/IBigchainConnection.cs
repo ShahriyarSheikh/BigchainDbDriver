@@ -3,7 +3,7 @@ using BigchainDbDriver.Assets.Models.TransactionModels;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace BigchainDbDriver.General
+namespace BigchainDbDriver.Client
 {
     public interface IBigchainConnection
     {

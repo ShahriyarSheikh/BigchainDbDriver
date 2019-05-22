@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace BigchainDbDriver.General
+namespace BigchainDbDriver.Client
 {
     public class BigchainConnection
     {
