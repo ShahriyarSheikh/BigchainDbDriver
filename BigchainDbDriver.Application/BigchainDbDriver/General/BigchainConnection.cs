@@ -15,7 +15,7 @@ namespace BigchainDbDriver.General
 {
     public class BigchainConnection
     {
-        private static HttpClientHandler httpClientHandler = new HttpClientHandler();
+        private static HttpClientHandler _httpClientHandler;
         private static HttpClient client;
 
 
@@ -23,44 +23,45 @@ namespace BigchainDbDriver.General
         private readonly Dictionary<string, string> _headers;
         private readonly bool _ignoreSslErrors;
 
-        public BigchainConnection(string path, Dictionary<string, string> headers = null,bool ignoreSslErrors = false)
+        public BigchainConnection(string path, Dictionary<string, string> headers = null, bool ignoreSslErrors = false)
         {
+            _httpClientHandler = new HttpClientHandler();
             _path = path;
             _headers = headers;
             _ignoreSslErrors = ignoreSslErrors;
         }
 
-        private string GetApiUrls(string endpoint) {
-            return _path +  BigchainDbUrls.BigchainDbURLs.GetValueOrDefault(endpoint);
+        private string GetApiUrls(string endpoint)
+        {
+            return _path + BigchainDbUrls.BigchainDbURLs.GetValueOrDefault(endpoint);
         }
 
-        public async Task<(SignedTxResponse,HttpStatusCode)> PostTransactionCommit(SignedTxResponse transaction)
+        public async Task<(SignedTxResponse, HttpStatusCode)> PostTransactionCommit(SignedTxResponse transaction)
         {
             EnsureClient();
             var txSerialized = JsonConvert.SerializeObject(transaction);
             var canonicalString = JsonUtility.SerializeTransactionIntoCanonicalString(txSerialized);
             var response = await client.PostAsync(GetApiUrls(BigchainDbUrls.Transactions), new StringContent(canonicalString, Encoding.UTF8, "application/json"));
-            
+
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                return (null,response.StatusCode);
+                return (null, response.StatusCode);
             }
             //TODO: after determining proper type, cast here
             var responseContent = await response.Content.ReadAsAsync<SignedTxResponse>();
-            return (responseContent,response.StatusCode);
+            return (responseContent, response.StatusCode);
         }
-
         public async Task<Block> ListBlocks(string transctionId)
         {
             EnsureClient();
             var response = await client.GetAsync($"{GetApiUrls(BigchainDbUrls.Transactions)}?asset_id={transctionId}");
-            if (response.StatusCode != HttpStatusCode.OK) {
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
                 return null;
             }
             var responseContent = await response.Content.ReadAsAsync<List<Block>>();
-            return responseContent[responseContent.Count -1]; //gets latest element
+            return responseContent[responseContent.Count - 1]; //gets latest element
         }
-
 
         private void EnsureClient()
         {
@@ -68,7 +69,7 @@ namespace BigchainDbDriver.General
 
             SetupCertCheckIgnoreForDebug();
 
-            client = new HttpClient(httpClientHandler);
+            client = new HttpClient(_httpClientHandler);
             var baseAddress = this.GetServerUri();
             client.BaseAddress = baseAddress;
         }
@@ -77,7 +78,7 @@ namespace BigchainDbDriver.General
         {
             if (!_ignoreSslErrors) return;
 
-            httpClientHandler.ServerCertificateCustomValidationCallback = (message,
+            _httpClientHandler.ServerCertificateCustomValidationCallback = (message,
                 cert, chain, errors) =>
             { return true; };
         }
@@ -87,8 +88,6 @@ namespace BigchainDbDriver.General
             var parsedUrl = new Uri(_path);
             return parsedUrl;
         }
-
-
 
     }
 }
