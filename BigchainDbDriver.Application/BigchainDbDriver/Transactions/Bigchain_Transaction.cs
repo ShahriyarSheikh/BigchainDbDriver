@@ -94,7 +94,7 @@ namespace BigchainDbDriver.Transactions
 
         }
 
-		private InputTemplate makeInputTemplate(List<string> publicKeys, Fulfill fulfills = null, string fulfillment = null)
+		private InputTemplate makeInputTemplate(IList<string> publicKeys, Fulfill fulfills = null, string fulfillment = null)
 		{
             return new InputTemplate {
                 Fulfillment = fulfillment,

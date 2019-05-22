@@ -12,9 +12,9 @@ namespace BigchainDbDriver.Assets.Models.TransactionModels
         [JsonProperty("operation")]
         public dynamic Operation { get; set; }
         [JsonProperty("outputs")]
-        public List<Output> Outputs { get; set; }
+        public IList<Output> Outputs { get; set; }
         [JsonProperty("inputs")]
-        public List<InputTemplate> Inputs { get; set; }
+        public IList<InputTemplate> Inputs { get; set; }
         [JsonProperty("metadata")]
         public dynamic Metadata { get; set; }
         [JsonProperty("asset")]

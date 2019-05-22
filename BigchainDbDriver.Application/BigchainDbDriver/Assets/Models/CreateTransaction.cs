@@ -6,7 +6,7 @@ namespace BigchainDbDriver.Assets.Models
 	{
 		public dynamic Model { get; set; }
 		public dynamic Metadata { get; set; }
-		public List<dynamic> Output { get; set; }
+		public IList<dynamic> Output { get; set; }
 		public string PubKey { get; set; }
 	}
 }

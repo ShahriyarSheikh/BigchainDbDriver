@@ -9,9 +9,9 @@ namespace BigchainDbDriver.Assets.Models.ResponseModels
     public class Block
     {
         [JsonProperty("inputs")]
-        public List<Input> Inputs { get; set; }
+        public IList<Input> Inputs { get; set; }
         [JsonProperty("outputs")]
-        public List<Output> Outputs { get; set; }
+        public IList<Output> Outputs { get; set; }
         [JsonProperty("operation")]
         public string Operation { get; set; }
         [JsonProperty("metadata")]
@@ -28,7 +28,7 @@ namespace BigchainDbDriver.Assets.Models.ResponseModels
     public class Input
     {
         [JsonProperty("owners_before")]
-        public List<string> OwnersBefore { get; set; }
+        public IList<string> OwnersBefore { get; set; }
         [JsonProperty("fulfills")]
         public dynamic Fulfills { get; set; }
         [JsonProperty("fulfillment")]
@@ -54,7 +54,7 @@ namespace BigchainDbDriver.Assets.Models.ResponseModels
     public class Output
     {
         [JsonProperty("public_keys")]
-        public List<string> PublicKeys { get; set; }
+        public IList<string> PublicKeys { get; set; }
         [JsonProperty("condition")]
         public Condition Condition { get; set; }
         [JsonProperty("amount")]
