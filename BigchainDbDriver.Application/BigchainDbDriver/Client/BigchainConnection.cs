@@ -83,7 +83,7 @@ namespace BigchainDbDriver.Client
             { return true; };
         }
 
-        public Uri GetServerUri()
+        private Uri GetServerUri()
         {
             var parsedUrl = new Uri(_path);
             return parsedUrl;
