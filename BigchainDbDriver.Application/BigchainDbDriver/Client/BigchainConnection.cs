@@ -43,7 +43,7 @@ namespace BigchainDbDriver.Client
             var canonicalString = JsonUtility.SerializeTransactionIntoCanonicalString(txSerialized);
             var response = await client.PostAsync(GetApiUrls(BigchainDbUrls.Transactions), new StringContent(canonicalString, Encoding.UTF8, "application/json"));
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Accepted)
             {
                 return (null, response.StatusCode);
             }
@@ -62,6 +62,27 @@ namespace BigchainDbDriver.Client
             var responseContent = await response.Content.ReadAsAsync<List<Block>>();
             return responseContent[responseContent.Count - 1]; //gets latest element
         }
+
+
+        public async Task<List<T>> GetTransactionDetails<T>(string transactionId)
+        {
+            try
+            {
+                EnsureClient();
+                var response = await client.GetAsync($"{GetApiUrls(BigchainDbUrls.TransactionsDetail)}?asset_id={transactionId}");
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    return default;
+                }
+                var responseContent = await response.Content.ReadAsAsync<List<T>>();
+                return responseContent;
+            }
+            catch 
+            {
+                throw;
+            }
+        }
+
 
         private void EnsureClient()
         {

@@ -14,7 +14,7 @@ namespace BigchainDbDriver.Assets.Models.TransactionModels
 
     public class DataDefinition {
         [JsonProperty("kyc")]
-        public KycDefinition Kyc { get; set; }
+        public dynamic Kyc { get; set; }
     }
 
     public class KycDefinition

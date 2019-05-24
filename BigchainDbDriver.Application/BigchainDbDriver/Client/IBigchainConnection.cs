@@ -1,5 +1,6 @@
 ﻿using BigchainDbDriver.Assets.Models.ResponseModels;
 using BigchainDbDriver.Assets.Models.TransactionModels;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -40,5 +41,6 @@ namespace BigchainDbDriver.Client
         Task<dynamic> ListOutputs(string publicKey, string spent);
         Task<dynamic> ListTransactions(string assetId, string operation);
         Task<dynamic> ListVotes(dynamic blockId);
+        Task<List<T>> GetTransaciton<T>(string transactionId);
     }
 }
