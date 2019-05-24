@@ -8,7 +8,7 @@ using System.Text;
 
 namespace BigchainDbDriver.Transactions
 {
-    public class Bigchain_SignTransaction : IBigchain_SignTransaction
+    public class Bigchain_SignTransaction : IBigchain_SignTransactionWrite
     {
 
         public TxTemplate SignTransaction(TxTemplate transaction, List<string> privateKeys)

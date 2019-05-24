@@ -5,7 +5,7 @@ using NBitcoin.DataEncoders;
 
 namespace BigchainDbDriver.Transactions
 {
-    public class Bigchain_Transaction : IBigchain_Transaction
+    public class Bigchain_Transaction : IBigchain_TransactionWrite
     {
         private readonly DataEncoder encoder;
         private readonly string Ed25519ConditionType = "ed25519-sha-256";

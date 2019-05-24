@@ -3,8 +3,19 @@ using System.Collections.Generic;
 
 namespace BigchainDbDriver.Transactions
 {
-    public interface IBigchain_SignTransaction
+    public interface IBigchain_SignTransactionWrite : IBigchain_SignTransactionRead
     {
+
+        /// <summary>
+        /// Will sign a transaction and generate fullfillemntUri for post commit to the network
+        /// </summary>
+        /// <param name="transaction"></param>
+        /// <param name="privateKeys"></param>
+        /// <returns></returns>
+        TxTemplate SignTransaction(TxTemplate transaction, List<string> privateKeys);
+    }
+
+    public interface IBigchain_SignTransactionRead {
 
         /// <summary>
         /// Will generate fulfillment Uri based on pubKey(byte[]) and signature
@@ -33,12 +44,5 @@ namespace BigchainDbDriver.Transactions
         SignatureMetadata GetSignature(TxTemplate transaction, string serializedTransaction, int index, string privKey);
 
 
-        /// <summary>
-        /// Will sign a transaction and generate fullfillemntUri for post commit to the network
-        /// </summary>
-        /// <param name="transaction"></param>
-        /// <param name="privateKeys"></param>
-        /// <returns></returns>
-        TxTemplate SignTransaction(TxTemplate transaction, List<string> privateKeys);
     }
 }

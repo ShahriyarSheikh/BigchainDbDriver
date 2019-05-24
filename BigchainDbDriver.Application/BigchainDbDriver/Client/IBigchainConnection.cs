@@ -5,8 +5,24 @@ using System.Threading.Tasks;
 
 namespace BigchainDbDriver.Client
 {
-    public interface IBigchainConnection
+    public interface IBigchainConnectionWrite : IBigchainConnectionRead
     {
+
+
+        /// <summary>
+        /// Commits a signed transaction to bigchain db
+        /// </summary>
+        /// <param name="transaction">Signed transaction with valid fulfills and fulfillmentUri</param>
+        /// <returns></returns>
+        Task<(SignedTxResponse, HttpStatusCode)> PostTransactionCommit(SignedTxResponse transaction);
+
+    }
+
+    public interface IBigchainConnectionRead {
+
+        Task<dynamic> SearchAssets(dynamic search);
+        Task<dynamic> SearchMetadata(dynamic search);
+
         /// <summary>
         /// Provided blockheight, returns block details
         /// </summary>
@@ -24,15 +40,5 @@ namespace BigchainDbDriver.Client
         Task<dynamic> ListOutputs(string publicKey, string spent);
         Task<dynamic> ListTransactions(string assetId, string operation);
         Task<dynamic> ListVotes(dynamic blockId);
-
-        /// <summary>
-        /// Commits a signed transaction to bigchain db
-        /// </summary>
-        /// <param name="transaction">Signed transaction with valid fulfills and fulfillmentUri</param>
-        /// <returns></returns>
-        Task<(SignedTxResponse, HttpStatusCode)> PostTransactionCommit(SignedTxResponse transaction);
-
-        Task<dynamic> SearchAssets(dynamic search);
-        Task<dynamic> SearchMetadata(dynamic search);
     }
 }
